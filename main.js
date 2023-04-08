@@ -1,7 +1,5 @@
 import { promises as fs } from "fs";
 
-// const RUTA_ARCHIVO = "./info.txt"
-
 class ProductManager {
     constructor(path) {
         this.path = path
@@ -25,7 +23,7 @@ class ProductManager {
         }
     }
     async reescribirTxt(word) {
-        await fs.writeFile(this.path, JSON.stringify(this.Products)); //REESCRIBO EL INFO.TXT CON LA NUEVA INFORMACION
+        await fs.writeFile(this.path, JSON.stringify(this.Products)); 
         console.log(`producto ${word} exitosamente`);
     }
     async getProduct() {
