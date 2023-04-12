@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 
-class ProductManager {
+export class ProductManager {
     constructor(path) {
         this.path = path
         this.Products = []
@@ -23,7 +23,7 @@ class ProductManager {
         }
     }
     async reescribirTxt(word) {
-        await fs.writeFile(this.path, JSON.stringify(this.Products)); 
+        await fs.writeFile(this.path, JSON.stringify(this.Products, null, 2));
         console.log(`producto ${word} exitosamente`);
     }
     async getProduct() {
@@ -54,14 +54,14 @@ class ProductManager {
             this.Products.splice(index, 1);
             const prod = this.Products;
             console.log(prod);
-        try {
-            await fs.writeFile(this.path, "");
-            this.reescribirTxt("eliminado");
-        } catch (error) {
-            return error;
-        }
+            try {
+                await fs.writeFile(this.path, "");
+                this.reescribirTxt("eliminado");
+            } catch (error) {
+                return error;
+            }
         } else {
-        console.log("Producto no encontrado");
+            console.log("Producto no encontrado");
         }
     }
 }

@@ -1,1 +1,29 @@
-[{"title":"jalea","description":"pan de molde lacteado","price":250,"thumbnail":"img","code":"PLB","stock":100,"id":1},{"title":"Queso Rallado","description":"queso parmesano","price":500,"thumbnail":"img","code":"QLAS","stock":100,"id":3},{"title":"Mermelada","description":"Mermelada de frutilla","price":600,"thumbnail":"img","code":"MF","stock":100,"id":4}]
+[
+  {
+    "title": "jalea",
+    "description": "pan de molde lacteado",
+    "price": 250,
+    "thumbnail": "img",
+    "code": "PLB",
+    "stock": 100,
+    "id": 1
+  },
+  {
+    "title": "Queso Rallado",
+    "description": "queso parmesano",
+    "price": 500,
+    "thumbnail": "img",
+    "code": "QLAS",
+    "stock": 100,
+    "id": 3
+  },
+  {
+    "title": "Mermelada",
+    "description": "Mermelada de frutilla",
+    "price": 600,
+    "thumbnail": "img",
+    "code": "MF",
+    "stock": 100,
+    "id": 4
+  }
+]
