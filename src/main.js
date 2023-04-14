@@ -23,16 +23,28 @@ export class ProductManager {
         }
     }
     async reescribirTxt(word) {
-        await fs.writeFile(this.path, JSON.stringify(this.Products, null, 2));
+        await fs.writeFile(this.path, JSON.stringify(this.Products));
         console.log(`producto ${word} exitosamente`);
     }
+
     async getProduct() {
-        console.log(this.Products)
+        const txt = await fs.readFile(this.path, "utf-8");
+        return txt;
     }
+
     async getProductById(id) {
-        const product = this.Products.find((product) => product.id === id)
-        if (product) { return product }
-        else { console.error("Product not found") }
+        try {
+            const prodsJSON = await fs.readFile(this.path, "utf-8");
+            const prods = JSON.parse(prodsJSON);
+            if (prods.some((prod) => prod.id === parseInt(id))) {
+                return prods.find((prod) => prod.id === parseInt(id));
+            } else {
+                return "Producto no encontrado";
+            }
+        } catch (error) {
+            console.error("Error al leer el archivo JSON:", error);
+            return "Error al leer el archivo JSON";
+        }
     }
 
     async updateProduct(id, campo, valor) {
@@ -80,14 +92,32 @@ const pan = new Products("Pan lactal", "pan de molde lacteado", 250, "img", "PLB
 const galletitas = new Products("Oreo", "galletitas dulces", 200, "img", "GAO", 100)
 const queso = new Products("Queso Rallado", "queso parmesano", 500, "img", "QLAS", 100)
 const mermelada = new Products("Mermelada", "Mermelada de frutilla", 600, "img", "MF", 100)
+const cereales = new Products("Cereales", "Cereales de chocolate", 300, "img", "GX", 100)
+const cafe = new Products("Cafe", "Cafe instantaneo", 900, "img", "CD", 100)
+const leche = new Products("Leche", "Leche descremada", 150, "img", "LLS", 100)
+const cacao = new Products("Cacao", "Caco nesquick", 350, "img", "NQ", 100)
+const fideos = new Products("Fideos", "Fideos Mostacholes", 100, "img", "FM", 100)
+const arroz = new Products("Arroz", "Arroz largo fino", 180, "img", "AG", 100)
+const atun = new Products("Atun", "Atun", 400, "img", "ALC", 100)
+
 
 const productManager1 = new ProductManager("./info.txt")
 productManager1.addProduct(pan)
 productManager1.addProduct(galletitas)
 productManager1.addProduct(queso)
 productManager1.addProduct(mermelada)
+productManager1.addProduct(cereales)
+productManager1.addProduct(cafe)
+productManager1.addProduct(leche)
+productManager1.addProduct(cacao)
+productManager1.addProduct(fideos)
+productManager1.addProduct(arroz)
+productManager1.addProduct(atun)
+
+
+
 
 
 productManager1.getProduct()
-productManager1.updateProduct(1, "title", "jalea")
-productManager1.deleteProduct(2)
+// productManager1.updateProduct(1, "title", "jalea")
+// productManager1.deleteProduct(2)
