@@ -11,6 +11,7 @@ export class ProductManager {
         if (!product.description || product.description === "") return console.log("Faltan datos");
         if (!product.price || product.price === "") return console.log("Faltan datos");
         if (!product.code || product.code === "") return console.log("Faltan datos");
+        if (!product.status || product.status === "") return product.status = true;
         if (!product.stock || product.stock === "") return console.log("Faltan datos");
 
         const productoRepetido = this.Products.find((productCargado) => productCargado.code === product.code)
@@ -23,13 +24,14 @@ export class ProductManager {
         }
     }
     async reescribirTxt(word) {
+        await fs.writeFile(this.path, "");
         await fs.writeFile(this.path, JSON.stringify(this.Products));
         console.log(`producto ${word} exitosamente`);
     }
 
-    async getProduct() {
-        const txt = await fs.readFile(this.path, "utf-8");
-        return txt;
+    async getProducts() {
+        const txt = await fs.readFile(this.path, 'utf-8')
+        return JSON.parse(txt)
     }
 
     async getProductById(id) {
@@ -47,77 +49,82 @@ export class ProductManager {
         }
     }
 
-    async updateProduct(id, campo, valor) {
-        const product = this.Products.find((product) => product.id === id);
-        if (product) {
-            product[campo] = valor;
-            try {
-                this.reescribirTxt("actualizado");
-            } catch (error) {
-                return error;
-            }
+
+    async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
+        const productJSON = await fs.readFile(this.path, 'utf-8')
+        const prods = JSON.parse(productJSON)
+        if (prods.some(product => product.id === parseInt(id))) {
+            let index = prods.findIndex(product => product.id === parseInt(id))
+            prods[index].title = title
+            prods[index].description = description
+            prods[index].price = price
+            prods[index].thumbnail = thumbnail
+            prods[index].code = code
+            prods[index].status = status
+            prods[index].stock = stock
+            await fs.writeFile(this.path, JSON.stringify(prods))
+            return "Producto actualizado"
         } else {
-            console.log("Producto no encontrado");
+            return "Producto no encontrado"
         }
     }
+
+
     async deleteProduct(id) {
-        const index = this.Products.findIndex((product) => product.id === id);
-        if (index !== -1) {
-            this.Products.splice(index, 1);
-            const prod = this.Products;
-            console.log(prod);
-            try {
-                await fs.writeFile(this.path, "");
-                this.reescribirTxt("eliminado");
-            } catch (error) {
-                return error;
+        try {
+            const productJSON = await fs.readFile(this.path, 'utf-8')
+            const prods = JSON.parse(productJSON)
+            if (prods.some(product => product.id === parseInt(id))) {
+                const productosFiltrados = prods.filter(product => product.id !== parseInt(id))
+                await fs.writeFile(this.path, JSON.stringify(productosFiltrados))
+                return "Producto eliminado"
+            } else {
+                return "Producto no encontrado"
             }
-        } else {
-            console.log("Producto no encontrado");
+        }
+        catch {
+            console.log("");
         }
     }
 }
 
 class Products {
-    constructor(title, description, price, thumbnail, code, stock) {
+    constructor(title, description, price, thumbnail, code, status, stock) {
         this.title = title
         this.description = description
         this.price = price
         this.thumbnail = thumbnail
         this.code = code
+        this.status = status
         this.stock = stock
     }
 }
-const pan = new Products("Pan lactal", "pan de molde lacteado", 250, "img", "PLB", 100)
-const galletitas = new Products("Oreo", "galletitas dulces", 200, "img", "GAO", 100)
-const queso = new Products("Queso Rallado", "queso parmesano", 500, "img", "QLAS", 100)
-const mermelada = new Products("Mermelada", "Mermelada de frutilla", 600, "img", "MF", 100)
-const cereales = new Products("Cereales", "Cereales de chocolate", 300, "img", "GX", 100)
-const cafe = new Products("Cafe", "Cafe instantaneo", 900, "img", "CD", 100)
-const leche = new Products("Leche", "Leche descremada", 150, "img", "LLS", 100)
-const cacao = new Products("Cacao", "Caco nesquick", 350, "img", "NQ", 100)
-const fideos = new Products("Fideos", "Fideos Mostacholes", 100, "img", "FM", 100)
-const arroz = new Products("Arroz", "Arroz largo fino", 180, "img", "AG", 100)
-const atun = new Products("Atun", "Atun", 400, "img", "ALC", 100)
+// const pan = new Products("Pan lactal", "pan de molde lacteado", 250, "img", "PLB", true, 100)
+// const galletitas = new Products("Oreo", "galletitas dulces", 200, "img", "GAO", true, 100)
+// const queso = new Products("Queso Rallado", "queso parmesano", 500, "img", "QLAS", true, 100)
+// const mermelada = new Products("Mermelada", "Mermelada de frutilla", 600, "img", "MF", true, 100)
+// const cereales = new Products("Cereales", "Cereales de chocolate", 300, "img", "GX", 100)
+// const cafe = new Products("Cafe", "Cafe instantaneo", 900, "img", "CD", 100)
+// const leche = new Products("Leche", "Leche descremada", 150, "img", "LLS", 100)
+// const cacao = new Products("Cacao", "Caco nesquick", 350, "img", "NQ", 100)
+// const fideos = new Products("Fideos", "Fideos Mostacholes", 100, "img", "FM", 100)
+// const arroz = new Products("Arroz", "Arroz largo fino", 180, "img", "AG", 100)
+// const atun = new Products("Atun", "Atun", 400, "img", "ALC", 100)
 
 
 const productManager1 = new ProductManager("./info.txt")
-productManager1.addProduct(pan)
-productManager1.addProduct(galletitas)
-productManager1.addProduct(queso)
-productManager1.addProduct(mermelada)
-productManager1.addProduct(cereales)
-productManager1.addProduct(cafe)
-productManager1.addProduct(leche)
-productManager1.addProduct(cacao)
-productManager1.addProduct(fideos)
-productManager1.addProduct(arroz)
-productManager1.addProduct(atun)
+// productManager1.addProduct(pan)
+// productManager1.addProduct(galletitas)
+// productManager1.addProduct(queso)
+// productManager1.addProduct(mermelada)
+// productManager1.addProduct(cereales)
+// productManager1.addProduct(cafe)
+// productManager1.addProduct(leche)
+// productManager1.addProduct(cacao)
+// productManager1.addProduct(fideos)
+// productManager1.addProduct(arroz)
+// productManager1.addProduct(atun)
 
-
-
-
-
-productManager1.getProduct()
+// productManager1.getProduct()
 // productManager1.updateProduct(1, "title", "jalea")
 // productManager1.deleteProduct(2)
