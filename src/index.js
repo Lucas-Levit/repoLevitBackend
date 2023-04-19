@@ -33,7 +33,6 @@ app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
 
-
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
 })

@@ -1,42 +1,35 @@
 import { Router } from "express";
 import { CartManager } from "../CartManager.js";
 
-
 const cartManager = new CartManager("./carrito.txt");
 const cartRouter = Router();
 
-// Metodo para agregar productos al array inicial
-// cartRouter.get("/", async (req, res) => {
-//     let products = await cartManager.getProducts();
-//     const { limit } = req.query;
-//     const newLimit = Number(limit);
-//     if (limit) {
-//         const newArray = products.slice(0, newLimit);
-//         res.send((newArray));
-//     } else {
-//         res.send((products));
-//     }
-// });
 
+cartRouter.get("/:cid", async (req, res) => {
+    const product = await cartManager.getCartById(req.params.cid);
+    res.send(product);
+});
 
-// Metodo para buscar un producto por id
-// cartRouter.get("/:pid", async (req, res) => {
-//     const product = await cartManager.getProductById(req.params.pid);
-//     const JSONproduct = (product);
-//     res.send(JSONproduct);
-// });
-
-
-// Metodo para agregar un producto nuevo al array existente
 cartRouter.post("/", async (req, res) => {
     try {
-        const { id, quantity, idCart } = req.body;
-        await cartManager.addProductCart(id, quantity, idCart);
-        res.send("Producto agregado al carrito exitosamente");
+        await cartManager.createCarrito();
+        res.send("Carrito creado exitosamente");
     } catch (error) {
-        res.send(error)
+        res.send(error);
     }
 });
 
+cartRouter.post("/:cid/product/:pid", async (req, res) => {
+    try {
+        await cartManager.addProductCart(
+            req.params.pid,
+            req.body.quantity,
+            req.params.cid
+        );
+        res.send("Producto agregado al carrito exitosamente");
+    } catch (error) {
+        res.send(error);
+    }
+});
 
-export default cartRouter
+export default cartRouter;

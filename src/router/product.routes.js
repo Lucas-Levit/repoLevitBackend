@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ProductManager } from "../main.js";
+import { ProductManager } from "../ProductManager.js";
 
 const productManager = new ProductManager("./info.txt")
 const productRouter = Router()
@@ -18,7 +18,6 @@ productRouter.get("/", async (req, res) => {
     }
 });
 
-
 // Metodo para buscar un producto por id
 productRouter.get("/:pid", async (req, res) => {
     const product = await productManager.getProductById(req.params.pid);
@@ -29,17 +28,17 @@ productRouter.get("/:pid", async (req, res) => {
 
 // Metodo para agregar un producto nuevo al array existente
 productRouter.post("/", async (req, res) => {
-    const { title, description, price, thumbnail, code, stock } = req.body
-    await productManager.addProduct({ title, description, price, thumbnail, code, stock })
-    res.send("Producto encontrado")
+    const { title, description, price, thumbnail, code, status, category, stock } = req.body
+    await productManager.addProduct({ title, description, price, thumbnail, code, status, category, stock })
+    res.send("Producto creado")
 })
 
 
 // Metodo para modificar un producto
 productRouter.put("/:id", async (req, res) => {
     const id = req.params.id
-    const { title, description, price, thumbnail, code, stock } = req.body
-    const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock })
+    const { title, description, price, thumbnail, code, status, category, stock } = req.body
+    const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, status, category, stock })
     res.send(mensaje)
 })
 
