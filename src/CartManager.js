@@ -46,14 +46,14 @@ export class CartManager {
             (products) => products.id === parseInt(id)
         );
         if (productIndex !== -1) {
-            carrito.cantidad[productIndex].quantity += parseInt(quantity);
+            carrito.products[productIndex].quantity += parseInt(quantity);
         } else {
             
             const newProduct = {
                 id: parseInt(id),
                 quantity: parseInt(quantity),
             };
-            carrito.cantidad.push(newProduct);
+            carrito.products    .push(newProduct);
         }
         const cartIndex = carts.findIndex((cart) => cart.id === parseInt(idCart));
         carts[cartIndex] = carrito;

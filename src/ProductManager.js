@@ -7,28 +7,38 @@ export class ProductManager {
     }
 
     async addProduct(product) {
-        if (!product.title || product.title === "") return console.log("Faltan datos");
-        if (!product.description || product.description === "") return console.log("Faltan datos");
-        if (!product.price || product.price === "") return console.log("Faltan datos");
-        if (!product.code || product.code === "") return console.log("Faltan datos");
-        if (!product.status || product.status === "") return product.status = true;
-        if (!product.stock || product.stock === "") return console.log("Faltan datos");
-        if (!product.category || product.category === "") return console.log("Faltan datos");
+        try {
+            if (!product.title || product.title === "") return console.log("Faltan datos de title");
+            if (!product.description || product.description === "") return console.log("Faltan datos de description");
+            if (!product.price || product.price === "") return console.log("Faltan datos de precio");
+            if (!product.code || product.code === "") return console.log("Faltan datos de code");
+            if (!product.status || product.status === "") return product.status = true;
+            if (!product.stock || product.stock === "") return console.log("Faltan datos de stock");
+            if (!product.category || product.category === "") return console.log("Faltan datos de category")
 
-        const productoRepetido = this.Products.find((productCargado) => productCargado.code === product.code)
-        if (productoRepetido) { return console.log("hay productos repetidos") }
-        else {
-            product.id = this.Products.length + 1
-            this.Products.push(product)
-            try { this.reescribirTxt("cargado") }
-            catch (error) { return error }
+            const prodsJSON = await fs.readFile(this.path, "utf-8");
+            const prods = JSON.parse(prodsJSON);
+            const productoRepetido = prods.some((productCargado) => productCargado.code === product.code)
+            if (productoRepetido) { return console.log("hay productos repetidos") }
+            else {
+                const prodsJSON = await fs.readFile(this.path, "utf-8");
+                const prods = JSON.parse(prodsJSON);
+                product.id = prods.length + 1
+                prods.push(product)
+                await fs.writeFile(this.path, JSON.stringify(prods));
+                console.log("Producto creado")
+                return null
+            }
+        }
+        catch (error) {
+            console.error(error);
         }
     }
-    async reescribirTxt(word) {
-        await fs.writeFile(this.path, "");
-        await fs.writeFile(this.path, JSON.stringify(this.Products));
-        console.log(`producto ${word} exitosamente`);
-    }
+    // async reescribirTxt(word) {
+    //     await fs.writeFile(this.path, "");
+    //     await fs.writeFile(this.path, JSON.stringify(this.Products));
+    //     console.log(`producto ${word} exitosamente`);
+    // }
 
     async getProducts() {
         const txt = await fs.readFile(this.path, 'utf-8')
@@ -50,7 +60,6 @@ export class ProductManager {
         }
     }
 
-
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status, category }) {
         const productJSON = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(productJSON)
@@ -70,7 +79,6 @@ export class ProductManager {
             return "Producto no encontrado"
         }
     }
-
 
     async deleteProduct(id) {
         try {

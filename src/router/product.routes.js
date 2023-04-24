@@ -21,18 +21,25 @@ productRouter.get("/", async (req, res) => {
 // Metodo para buscar un producto por id
 productRouter.get("/:pid", async (req, res) => {
     const product = await productManager.getProductById(req.params.pid);
-    const JSONproduct = (product);
-    res.send(JSONproduct);
+    res.render("product", {
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        code: product.code,
+        stock: product.stock,
+    });
 });
-
 
 // Metodo para agregar un producto nuevo al array existente
 productRouter.post("/", async (req, res) => {
-    const { title, description, price, thumbnail, code, status, category, stock } = req.body
-    await productManager.addProduct({ title, description, price, thumbnail, code, status, category, stock })
-    res.send("Producto creado")
-})
-
+    const { title, description, price, thumbnail, code, status, stock, category } = req.body;
+    const result = await productManager.addProduct({ title, description, price, thumbnail, code, status, stock, category });
+    if (result === null) {
+        res.send("Producto creado exitosamente");
+    } else {
+        res.send("ocurrio un error en la carga. Intente nuevamente");
+    }
+});
 
 // Metodo para modificar un producto
 productRouter.put("/:id", async (req, res) => {
