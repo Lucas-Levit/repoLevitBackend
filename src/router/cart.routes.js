@@ -4,7 +4,6 @@ import { CartManager } from "../CartManager.js";
 const cartManager = new CartManager("./carrito.txt");
 const cartRouter = Router();
 
-
 cartRouter.get("/:cid", async (req, res) => {
     const product = await cartManager.getCartById(req.params.cid);
     res.send(product);

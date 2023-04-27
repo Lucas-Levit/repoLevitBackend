@@ -5,28 +5,23 @@ export class ProductManager {
         this.path = path
         this.Products = []
     }
-
     async addProduct(product) {
         try {
-            if (!product.title || product.title === "") return console.log("Faltan datos de title");
-            if (!product.description || product.description === "") return console.log("Faltan datos de description");
-            if (!product.price || product.price === "") return console.log("Faltan datos de precio");
-            if (!product.code || product.code === "") return console.log("Faltan datos de code");
-            if (!product.status || product.status === "") return product.status = true;
-            if (!product.stock || product.stock === "") return console.log("Faltan datos de stock");
-            if (!product.category || product.category === "") return console.log("Faltan datos de category")
+            const prods = await this.getProducts();
+            if (!product.title || product.title === "") { console.log("Faltan datos de title"); return "Faltan datos de title"; }
+            if (!product.description || product.description === "") { console.log("Faltan datos de description"); return "Faltan datos de description" }
+            if (!product.price || product.price === "") { console.log("Faltan datos de precio"); return "Faltan datos de precio" }
+            if (!product.code || product.code === "") { console.log("Faltan datos de code"); return "Faltan datos de code" }
+            if (product.status === "") product.status = true;
+            if (!product.stock || product.stock === "") { console.log("Faltan datos de stock"); return "Faltan datos de stock" }
+            if (!product.category || product.category === "") { console.log("Faltan datos de category"); return "Faltan datos de category" }
 
-            const prodsJSON = await fs.readFile(this.path, "utf-8");
-            const prods = JSON.parse(prodsJSON);
             const productoRepetido = prods.some((productCargado) => productCargado.code === product.code)
-            if (productoRepetido) { return console.log("hay productos repetidos") }
+            if (productoRepetido) { console.log("hay productos repetidos"); return "hay productos repetidos" }
             else {
-                const prodsJSON = await fs.readFile(this.path, "utf-8");
-                const prods = JSON.parse(prodsJSON);
-                product.id = prods.length + 1
+                product.id = ProductManager.incrementarID()
                 prods.push(product)
-                await fs.writeFile(this.path, JSON.stringify(prods));
-                console.log("Producto creado")
+                await this.reescribirTxt("creado", prods);
                 return null
             }
         }
@@ -34,11 +29,23 @@ export class ProductManager {
             console.error(error);
         }
     }
-    // async reescribirTxt(word) {
-    //     await fs.writeFile(this.path, "");
-    //     await fs.writeFile(this.path, JSON.stringify(this.Products));
-    //     console.log(`producto ${word} exitosamente`);
-    // }
+    static incrementarID() {
+        if (this.idIncrement) {
+            this.idIncrement++;
+        } else {
+            this.idIncrement = 1;
+        }
+        return this.idIncrement;
+    }
+    async reescribirTxt(word, prods) {
+        try {
+            await fs.writeFile(this.path, "");
+            await fs.writeFile(this.path, JSON.stringify(prods));
+            console.log(`producto ${word} exitosamente`);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     async getProducts() {
         const txt = await fs.readFile(this.path, 'utf-8')
@@ -46,23 +53,20 @@ export class ProductManager {
     }
 
     async getProductById(id) {
-        try {
-            const prodsJSON = await fs.readFile(this.path, "utf-8");
-            const prods = JSON.parse(prodsJSON);
-            if (prods.some((prod) => prod.id === parseInt(id))) {
-                return prods.find((prod) => prod.id === parseInt(id));
-            } else {
-                return "Producto no encontrado";
-            }
-        } catch (error) {
-            console.error("Error al leer el archivo JSON:", error);
-            return "Error al leer el archivo JSON";
+        const prods = await this.getProducts();
+        if (prods.some((prod) =>
+            prod.id
+            === parseInt(id))) {
+            return prods.find((prod) =>
+                prod.id
+                === parseInt(id));
+        } else {
+            return false;
         }
     }
 
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status, category }) {
-        const productJSON = await fs.readFile(this.path, 'utf-8')
-        const prods = JSON.parse(productJSON)
+        const prods = await this.getProducts();
         if (prods.some(product => product.id === parseInt(id))) {
             let index = prods.findIndex(product => product.id === parseInt(id))
             prods[index].title = title
@@ -73,7 +77,7 @@ export class ProductManager {
             prods[index].status = status
             prods[index].stock = stock
             prods[index].category = category
-            await fs.writeFile(this.path, JSON.stringify(prods))
+            await this.reescribirTxt("Actualizado", prods);
             return "Producto actualizado"
         } else {
             return "Producto no encontrado"
@@ -82,11 +86,10 @@ export class ProductManager {
 
     async deleteProduct(id) {
         try {
-            const productJSON = await fs.readFile(this.path, 'utf-8')
-            const prods = JSON.parse(productJSON)
+            const prods = await this.getProducts();
             if (prods.some(product => product.id === parseInt(id))) {
                 const productosFiltrados = prods.filter(product => product.id !== parseInt(id))
-                await fs.writeFile(this.path, JSON.stringify(productosFiltrados))
+                await this.reescribirTxt("eliminado", productosFiltrados);
                 return "Producto eliminado"
             } else {
                 return "Producto no encontrado"

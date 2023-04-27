@@ -33,21 +33,30 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
 
-//ServerIO
 const io = new Server(server);
 io.on("connection", (socket) => {
-    console.log("Cliente conectado");
-    socket.on("mensaje", (info) => {
-        console.log(info);
+    console.log("cliente conectado");
+    socket.on("productoIngresado", async ([info]) => {
+        const title = info.title;
+        const description = info.description;
+        const price = info.price;
+        const thumbnail = info.thumbnail;
+        const code = info.code;
+        const status = info.status;
+        const stock = info.stock;
+        const category = info.category;
+        await productManager.addProduct({title,description,price,thumbnail,code,status,stock,category
+        });
+        const newProducts = await productManager.getProducts();
+        io.emit("nuevosproductos", newProducts);
     });
-    socket.on("user", (info) => {
-        console.log(info);
-        socket.emit("confirmacionAcceso", "Acceso permitido");
-    });
-    //Mensaje que se envia a los clientes conectados a otros sockets
-    socket.broadcast.emit("mensaje-socket-propio", "Datos jugadores");
-});
 
+    socket.on("productoEliminado", async (id) => {
+        await productManager.deleteProduct(id);
+        const newProducts = await productManager.getProducts();
+        io.emit("nuevosproductos", newProducts);
+    });
+});
 //Routes
 app.use('/products', productRouter)
 app.use("/cart", cartRouter);
@@ -63,7 +72,15 @@ app.post('/upload', upload.single('product'), (req, res) => {
 app.get("/", async (req, res) => {
     let products = await productManager.getProducts();
     res.render("home", {
-        titulo: "primera prueba" , 
+        titulo: "primera prueba",
         products: products,
+    });
+});
+
+app.get("/realtimeproducts", async (req, res) => {
+    const getProducts = await productManager.getProducts();
+    res.render("realTimeProducts", {
+        titulo: "real time products",
+        products: getProducts,
     });
 });

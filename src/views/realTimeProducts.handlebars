@@ -1,0 +1,76 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{titulo}}</title>
+</head>
+
+<body>
+    <form id="form">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">titulo</label>
+            <input type="text" class="form-control" id="titulo" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">descripcion</label>
+            <input type="text" class="form-control" id="descripcion" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">precio</label>
+            <input type="text" class="form-control" id="precio" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">categoria</label>
+            <input type="text" class="form-control" id="categoria" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">stock</label>
+            <input type="text" class="form-control" id="stock" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">status</label>
+            <input type="text" class="form-control" id="status" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">imagen</label>
+            <input type="text" class="form-control" id="imagen" aria-describedby="emailHelp" />
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">codigo</label>
+            <input type="text" class="form-control" id="codigo" aria-describedby="emailHelp" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="enviar" value="enviar" name="enviar">Crear</button>
+    </form>
+    <form id="eliminar">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Id</label>
+            <input type="text" class="form-control" id="id" aria-describedby="emailHelp" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="" value="" name="">Eliminar</button>
+    </form>
+    <div class="card-group d-flex">
+        <div class="row row-cols-3" id="producto">
+            {{#each products}}
+            <div class="card">
+                <div class="text-center">
+                    <source srcset="..." type="image/svg+xml" />
+                    <img src="{{this.thumbnail}}" class="img-fluid img-thumbnail" alt="Imagen del producto" /></div>
+                <div class="card-body">
+                    <h5 class="card-title">titulo: {{title}}</h5>
+                    <p class="card-text">descripcion: {{description}}</p>
+                    <p class="card-text">precio: {{price}}</p>
+                    <p class="card-text">codigo: {{code}}</p>
+                    <p class="card-text">stock: {{stock}}</p>
+                    <p class="card-text">estado: {{status}}</p>
+                    <p class="card-text">categoria: {{category}}</p>
+                    <p class="card-text">id: {{id}}</p>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+
+</html>

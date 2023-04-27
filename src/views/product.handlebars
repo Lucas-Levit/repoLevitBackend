@@ -1,4 +1,4 @@
-<div>
+{{!-- <div>
     <p>{{title}}</p>
     <p>{{description}}</p>
     <p>{{price}}</p>
@@ -6,4 +6,28 @@
     <p>{{stock}}</p>
     <p>{{status}}</p>
     <p>{{category}}</p>
+</div> --}}
+
+{{#if existe}}
+<div class="card-group d-flex">
+    <div class="row row-cols-12">
+        <div class="card">
+            <div class="text-center">
+                <source srcset="..." type="image/svg+xml" />
+                <img class="img-fluid img-thumbnail" src="{{thumbnail}}" alt="Imagen del producto" /></div>
+            <div class="card-body">
+                <h5 class="card-title">titulo: {{title}}</h5>
+                <p class="card-text">descripcion: {{description}}</p>
+                <p class="card-text">precio: {{price}}</p>
+                <p class="card-text">codigo: {{code}}</p>
+                <p class="card-text">stock: {{stock}}</p>
+                <p class="card-text">estado: {{status}}</p>
+                <p class="card-text">categoria: {{category}}</p>
+                <p class="card-text">id: {{id}}</p>
+            </div>
+        </div>
+    </div>
 </div>
+{{else}}
+<h4>{{mensaje}}</h4>
+{{/if}}
