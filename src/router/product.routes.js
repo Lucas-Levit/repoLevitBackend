@@ -52,37 +52,42 @@ productRouter.get("/realtimeproducts", async (req, res) => {
 });
 
 // Metodo para agregar un producto nuevo al array existente
-productRouter.post("/realtimeproducts", async (req, res) => {
-    const { title, description, price, thumbnail, code, status, stock, category, } = req.body;
-    const result = await productManager.addProduct({ title, description, price, thumbnail, code, status, stock, category });
-    let products = await productManager.getProducts();
-    if (result === null) {
-        res.render("realTimeProducts", {
-            titulo: `real time products`,
-            products: products,
-        });
-        socket.emit("mensaje", {
-            titulo: `real time products`,
-            products: products,
-        });
-    } else {
-        res.render("realTimeProducts", {
-            titulo: `real time products`,
-            products: products,
-        });
-        socket.emit("mensaje", {
-            titulo: result.title,
-            descripcion: result.description,
-            precio: result.price,
-            categoria: result.category,
-            stock: result.stock,
-            status: result.status,
-            imagen: result.thumbnail,
-            codigo: result.code,
-            id: result.id,
-        });
-    }
-});
+// productRouter.post("/realtimeproducts", async (req, res) => {
+//     const { title, description, price, thumbnail, code, status, stock, category, } = req.body;
+//     const result = await productManager.addProduct({ title, description, price, thumbnail, code, status, stock, category });
+//     let products = await productManager.getProducts();
+//     if (result === null) {
+//         res.render("realTimeProducts", {
+//             titulo: `real time products`,
+//             products: products,
+//         });
+//         socket.emit("mensaje", {
+//             titulo: `real time products`,
+//             products: products,
+//         });
+//     } else {
+//         res.render("realTimeProducts", {
+//             titulo: `real time products`,
+//             products: products,
+//         });
+//         socket.emit("mensaje", {
+//             titulo: result.title,
+//             descripcion: result.description,
+//             precio: result.price,
+//             categoria: result.category,
+//             stock: result.stock,
+//             status: result.status,
+//             imagen: result.thumbnail,
+//             codigo: result.code,
+//             id: result.id,
+//         });
+//     }
+// });
+
+
+
+
+
 // Metodo para modificar un producto
 productRouter.put("/:id", async (req, res) => {
     const id = req.params.id
@@ -92,12 +97,12 @@ productRouter.put("/:id", async (req, res) => {
 })
 
 // Metodo para eliminar un producto
-productRouter.delete("/realtimeproducts", async (req, res) => {
-    const { id } = req.body;
-    const mensaje = await productManager.deleteProduct(id);
-    res.render("realTimeProducts", {
-        titulo: `real time products`,
-        products: mensaje,
-    });
-});
+// productRouter.delete("/realtimeproducts", async (req, res) => {
+//     const { id } = req.body;
+//     const mensaje = await productManager.deleteProduct(id);
+//     res.render("realTimeProducts", {
+//         titulo: `real time products`,
+//         products: mensaje,
+//     });
+// });
 export default productRouter
