@@ -34,35 +34,6 @@ app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
 
 
-// const io = new Server(server);
-// // const productos = await productManager.getProducts();
-// io.on("connection", (socket) => {
-//     console.log("cliente conectado");
-//     socket.on("productoIngresado", async ([info]) => {
-//         const title = info.title;
-//         const description = info.description;
-//         const price = info.price;
-//         const thumbnail = info.thumbnail;
-//         const code = info.code;
-//         const status = info.status;
-//         const stock = info.stock;
-//         const category = info.category;
-//         await productManager.addProduct({
-//             title,
-//             description,
-//             price,
-//             thumbnail,
-//             code,
-//             status,
-//             stock,
-//             category
-//         });
-//         const newProducts = await productManager.getProducts();
-//         io.emit("nuevosproductos", newProducts);
-//     });
-// });
-
-
 const io = new Server(server);
 io.on("connection", (socket) => {
     console.log("cliente conectado");
@@ -77,11 +48,12 @@ io.on("connection", (socket) => {
         const category = info.category;
         await productManager.addProduct({
             title, description, price, thumbnail, code, status, stock, category
-
         });
         const newProducts = await productManager.getProducts();
         io.emit("nuevosproductos", newProducts);
+        
     });
+    
 
     socket.on("productoEliminado", async (id) => {
         await productManager.deleteProduct(id);

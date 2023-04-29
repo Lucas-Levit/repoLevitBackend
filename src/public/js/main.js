@@ -95,6 +95,7 @@ form.addEventListener("submit", (e) => {
             title: "Faltan completar campos!",
         });
     }
+    form.reset()
 });
 
 socket.on("nuevosproductos", (arrayProductos) => {
