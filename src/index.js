@@ -7,11 +7,38 @@ import { engine } from "express-handlebars";
 import * as path from "path";
 import { Server } from "socket.io";
 import { ProductManager } from "./ProductManager.js";
+import mongoose from "mongoose";
+import { userModel } from "./models/User.js";
+import "dotenv/config";
+import { CartManager } from "./CartManager.js";
+import { MessagesManager } from "./MessagesManager.js";
+
 
 //Configuraciones
+mongoose
+    .connect(process.env.URL_MONGODB_ATLAS)
+    .then(() => console.log("DB is connected"))
+    .catch((error) => console.log("Error en MongoDB Atlas :", error));
+
+
 const app = express()
 const PORT = 4000
-const productManager = new ProductManager("./info.txt")
+const productManager = new ProductManager(
+    process.env.URL_MONGODB_ATLAS,
+    "ecommerce",
+    "products"
+);
+const cartManager = new CartManager(
+    process.env.URL_MONGODB_ATLAS,
+    "ecommerce",
+    "carts"
+);
+
+const messagesManager = new MessagesManager(
+    process.env.URL_MONGODB_ATLAS,
+    "ecommerce",
+    "messages"
+)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'src/public/img')
@@ -23,6 +50,8 @@ const storage = multer.diskStorage({
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname, "./views"))
+
+
 
 const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
@@ -51,14 +80,31 @@ io.on("connection", (socket) => {
         });
         const newProducts = await productManager.getProducts();
         io.emit("nuevosproductos", newProducts);
-        
     });
-    
+
 
     socket.on("productoEliminado", async (id) => {
         await productManager.deleteProduct(id);
         const newProducts = await productManager.getProducts();
         io.emit("nuevosproductos", newProducts);
+    });
+
+    socket.on("carrito", async () => {
+        await cartManager.deleteProduct(id);
+        const newCarts = await cartManager.createCarrito();
+        io.emit("nuevoCarrito", newCarts);
+    });
+    socket.on("nuevoCarrito", async (data) => {
+        await cartManager.createCarrito(data);
+        const newCarts = await cartManager.getCarts();
+        io.emit("nuevosCarritos", newCarts);
+    });
+    socket.on("nuevoMensaje", async ([data]) => {
+        const user = data.user;
+        const mensaje = data.message;
+        await messagesManager.addMessage(user, mensaje);
+        const newMessage = await messagesManager.getMessages();
+        io.emit("nuevosMensajes", newMessage);
     });
 });
 //Routes
@@ -86,5 +132,21 @@ app.get("/realtimeproducts", async (req, res) => {
     res.render("realTimeProducts", {
         titulo: "real time products",
         products: getProducts,
+    });
+});
+
+app.get("/carts", async (req, res) => {
+    const carts = await cartManager.getCarts();
+    res.render("carts", {
+        titulo: "Carrito",
+        carts: carts,
+    });
+});
+
+app.get("/chat", async (req, res) => {
+    const messages = await messagesManager.getMessages();
+    res.render("chat", {
+        titulo: "chat",
+        messages: messages,
     });
 });
