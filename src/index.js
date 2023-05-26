@@ -6,12 +6,12 @@ import cartRouter from "./router/cart.routes.js"
 import { engine } from "express-handlebars";
 import * as path from "path";
 import { Server } from "socket.io";
-import { ProductManager } from "./ProductManager.js";
 import mongoose from "mongoose";
-import { userModel } from "./models/User.js";
+import { productModel } from "./models/Products.js";
+import { cartModel } from "./models/Cart.js";
 import "dotenv/config";
-import { CartManager } from "./CartManager.js";
-import { MessagesManager } from "./MessagesManager.js";
+// import  cookieParser  from "cooke-parser";
+// import  session from "express-session";
 
 
 //Configuraciones
@@ -23,22 +23,24 @@ mongoose
 
 const app = express()
 const PORT = 4000
-const productManager = new ProductManager(
-    process.env.URL_MONGODB_ATLAS,
-    "ecommerce",
-    "products"
-);
-const cartManager = new CartManager(
-    process.env.URL_MONGODB_ATLAS,
-    "ecommerce",
-    "carts"
-);
+// await cartModel.create([{}]);
 
-const messagesManager = new MessagesManager(
-    process.env.URL_MONGODB_ATLAS,
-    "ecommerce",
-    "messages"
-)
+// const productManager = new ProductManager(
+//     process.env.URL_MONGODB_ATLAS,
+//     "ecommerce",
+//     "products"
+// );
+// const cartManager = new CartManager(
+//     process.env.URL_MONGODB_ATLAS,
+//     "ecommerce",
+//     "carts"
+// );
+
+// const messagesManager = new MessagesManager(
+//     process.env.URL_MONGODB_ATLAS,
+//     "ecommerce",
+//     "messages"
+// )
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'src/public/img')
@@ -62,6 +64,32 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
 
+
+//Crear cookie
+app.get('/setCookie', (req, res) => {
+    //Nombre cookie - Valor asociado a dicha cookie
+    res.cookie('CookieCookie', "Esta es mi primer cookie")
+})
+
+//Consultar cookie
+
+app.get('/getCookie', (req, res) => {
+    //Nombre cookie - Valor asociado a dicha cookie
+    res.send(req.cookies)
+})
+
+app.get('/setCookie', (req, res) => {
+    //Nombre cookie - Valor asociado a dicha cookie
+    res.cookie('CookieCookie', "Esta es mi primer cookie")
+    res.send("Cookie creada")
+})
+
+//Consultar cookie
+
+app.get('/getCookie', (req, res) => {
+    //Nombre cookie - Valor asociado a dicha cookie
+    res.send(req.cookies)
+})
 
 const io = new Server(server);
 io.on("connection", (socket) => {
@@ -108,8 +136,8 @@ io.on("connection", (socket) => {
     });
 });
 //Routes
-app.use('/products', productRouter)
-app.use("/cart", cartRouter);
+app.use('/api/products', productRouter)
+app.use("/api/cart", cartRouter);
 app.use('/', express.static(__dirname + '/public'))
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
@@ -150,3 +178,207 @@ app.get("/chat", async (req, res) => {
         messages: messages,
     });
 });
+
+
+// await productModel.create([
+//     {
+//         title: "1",
+//         description: "1",
+//         code: "1",
+//         category: "123",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "2",
+//         description: "2",
+//         code: "2",
+//         category: "FASD",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "3",
+//         description: "3",
+//         code: "3",
+//         category: "Fadfsf",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "4",
+//         description: "4",
+//         code: "4",
+//         category: "Ffghfg",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "5",
+//         description: "5",
+//         code: "5",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "6",
+//         description: "6",
+//         code: "6",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "7",
+//         description: "7",
+//         code: "7",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "8",
+//         description: "8",
+//         code: "8",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "9",
+//         description: "9",
+//         code: "9",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "10",
+//         description: "10",
+//         code: "10",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "11",
+//         description: "11",
+//         code: "11",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "12",
+//         description: "12",
+//         code: "12",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "13",
+//         description: "13",
+//         code: "13",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "14",
+//         description: "14",
+//         code: "14",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "15",
+//         description: "15",
+//         code: "15",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "16",
+//         description: "16",
+//         code: "16",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "17",
+//         description: "17",
+//         code: "17",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "18",
+//         description: "18",
+//         code: "18",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "19",
+//         description: "19",
+//         code: "19",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+//     {
+//         title: "20",
+//         description: "20",
+//         code: "20",
+//         category: "F",
+//         price: 100,
+//         stock: 100,
+//         status: true,
+//         thumbnail: ["hola"],
+//     },
+// ]);

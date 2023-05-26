@@ -1,12 +1,14 @@
 import { Router } from "express";
-import { ProductManager } from "../ProductManager.js";
+import { productModel } from "../models/Products.js";
+// import { ProductManager } from "../ProductManager.js";
 
-const productManager = new ProductManager("./info.txt")
+// const productManager = new ProductManager("./info.txt")
 const productRouter = Router()
+
 
 // Metodo para agregar productos al array inicial
 productRouter.get("/realtimeproducts", async (req, res) => {
-    let products = await productManager.getProducts();
+    const products = await productModel.collection("products").find({}).toArray();
     res.render("realTimeProducts", {
         titulo: `HOME - Todos los productos`,
         products: products,
@@ -15,20 +17,28 @@ productRouter.get("/realtimeproducts", async (req, res) => {
 
 // Metodo para buscar una cierta cantidad de productos segun el limite deseado
 productRouter.get("/", async (req, res) => {
-    let products = await productManager.getProducts();
-    const { limit } = req.query;
-    const newLimit = Number(limit);
-    if (limit) {
-        products = products.slice(0, newLimit);
-        res.render("home", {
-            titulo: `${newLimit} productos mostrados`,
-            products: products,
-        });
-    } else {
-        res.render("home", {
-            titulo: `HOME - Todos los productos`,
-            products: products,
-        });
+    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(
+        req.query.page
+    ) || 1;
+    const sort = req.query.sort || "";
+    const query = req.query.query || {};
+    const skip = (page - 1) * limit;
+
+    try {
+        const products = await productModel
+            .find(query)
+            .sort(sort === "asc" ? "price" : sort === "desc" ? "-price" : "")
+            .skip(skip)
+            .limit(limit);
+        res.status(200).json(products);
+        const report = await productModel.paginate(
+            { status: true, category: "F" },
+            { limit: 10, page: 1 }
+        );
+        console.log(report);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 
