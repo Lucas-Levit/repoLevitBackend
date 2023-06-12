@@ -10,18 +10,25 @@ import mongoose from "mongoose";
 import { productModel } from "./models/Products.js";
 import { cartModel } from "./models/Cart.js";
 import "dotenv/config";
-// import  cookieParser  from "cooke-parser";
-// import  session from "express-session";
+import "./utils/bcrypt.js"
+import passport from "passport";
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+import sessionRouter from "./router/session.routes.js";
+
+
 
 
 //Configuraciones
 mongoose
-    .connect(process.env.URL_MONGODB_ATLAS)
+    .connect(process.env.URL_MONGODB_ATLAS, {dbName: "ecommerce"})
     .then(() => console.log("DB is connected"))
     .catch((error) => console.log("Error en MongoDB Atlas :", error));
 
 
 const app = express()
+app.use(cookieParser())
 const PORT = 4000
 // await cartModel.create([{}]);
 
@@ -52,6 +59,7 @@ const upload = (multer({ storage: storage }))
 app.use('/api/products', productRouter)
 app.use("/api/cart", cartRouter);
 app.use('/', express.static(__dirname + '/public'))
+app.use("/sessions", sessionRouter)
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)
@@ -63,7 +71,7 @@ app.post('/upload', upload.single('product'), (req, res) => {
 //Crear cookie
 app.get('/setCookie', (req, res) => {
     //Nombre cookie - Valor asociado a dicha cookie
-    res.cookie('CookieCookie', "Esta es mi primer cookie")
+    res.cookie('CookieCookie', "Esta es mi primer cookie").json({ message: "Creando una cookie" })
 })
 
 //Consultar cookie
@@ -84,6 +92,18 @@ app.get('/getCookie', (req, res) => {
     //Nombre cookie - Valor asociado a dicha cookie
     res.send(req.cookies)
 })
+
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: process.env.URL_MONGODB_ATLAS ,
+        dbName: "ecommerce" , 
+        collectionName: "cookies"
+    }),
+    secret: "mysecret",
+    resave: true,
+    saveUninitialized: true
+}))
 
 /* ------------------------------ Codigo socket ----------------------------- */
 // const io = new Server(server);
