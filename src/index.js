@@ -16,18 +16,27 @@ import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import sessionRouter from "./router/session.routes.js";
+import FileStore from "session-file-store";
+import { constrainedMemory } from "process";
 
 
 
 
 //Configuraciones
+
+
+const fileStore = FileStore(session);
+const app = express();
 mongoose
-    .connect(process.env.URL_MONGODB_ATLAS, {dbName: "ecommerce"})
-    .then(() => console.log("DB is connected"))
+    .connect(process.env.URL_MONGODB_ATLAS, {
+        dbName: "ecommerce",
+    })
+    .then(() => {
+        console.log("DB is connected");
+    })
     .catch((error) => console.log("Error en MongoDB Atlas :", error));
 
 
-const app = express()
 app.use(cookieParser())
 const PORT = 4000
 // await cartModel.create([{}]);
@@ -96,13 +105,13 @@ app.get('/getCookie', (req, res) => {
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: process.env.URL_MONGODB_ATLAS ,
-        dbName: "ecommerce" , 
+        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        dbName: "ecommerce",
         collectionName: "cookies"
     }),
     secret: "mysecret",
-    resave: true,
-    saveUninitialized: true
+    resave: false,
+    saveUninitialized: false
 }))
 
 /* ------------------------------ Codigo socket ----------------------------- */
@@ -189,37 +198,39 @@ app.use(session({
 
 /* -------------------- Productos para hacer las pruebas -------------------- */
 
-// await productModel.create([
-//     {
-//         title: "Product 16",
-//         description: "Description for Product 16",
-//         code: "CODE16",
-//         category: "Category 1",
-//         price: 115,
-//         stock: 115,
-//         status: true,
-//         thumbnail: ["hola"]
-//     },
-//     {
-//         title: "Product 17",
-//         description: "Description for Product 17",
-//         code: "CODE17",
-//         category: "Category 1",
-//         price: 116,
-//         stock: 116,
-//         status: true,
-//         thumbnail: ["hola"]
-//     },
-//     {
-//         title: "Product 18",
-//         description: "Description for Product 18",
-//         code: "CODE18",
-//         category: "Category 1",
-//         price: 117,
-//         stock: 117,
-//         status: true,
-//         thumbnail: ["hola"]
-//     },
+await productModel.create([
+    {
+        title: "Product 16",
+        description: "Description for Product 16",
+        code: "CODE16",
+        category: "Category 1",
+        price: 115,
+        stock: 115,
+        status: true,
+        thumbnail: ["hola"]
+    },
+    {
+        title: "Product 17",
+        description: "Description for Product 17",
+        code: "CODE17",
+        category: "Category 1",
+        price: 116,
+        stock: 116,
+        status: true,
+        thumbnail: ["hola"]
+    },
+    {
+        title: "Product 18",
+        description: "Description for Product 18",
+        code: "CODE18",
+        category: "Category 1",
+        price: 117,
+        stock: 117,
+        status: true,
+        thumbnail: ["hola"]
+    }
+    ])
+    // ,
 //     {
 //         title: "Product 19",
 //         description: "Description for Product 19",
