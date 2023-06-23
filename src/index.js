@@ -18,12 +18,10 @@ import session from "express-session";
 import sessionRouter from "./router/session.routes.js";
 import FileStore from "session-file-store";
 import { constrainedMemory } from "process";
-
-
+import "./passportStrategies.js";
 
 
 //Configuraciones
-
 
 const fileStore = FileStore(session);
 const app = express();
@@ -40,6 +38,7 @@ mongoose
 app.use(cookieParser())
 const PORT = 4000
 // await cartModel.create([{}]);
+
 
 
 const storage = multer.diskStorage({
@@ -63,6 +62,17 @@ const server = app.listen(PORT, () => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
+
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        dbName: "ecommerce",
+        collectionName: "cookies"
+    }),
+    secret: "mysecret",
+    resave: false,
+    saveUninitialized: false
+}))
 
 //Routes
 app.use('/api/products', productRouter)
@@ -102,17 +112,13 @@ app.get('/getCookie', (req, res) => {
     res.send(req.cookies)
 })
 
+//Passport
+app.use(passport.initialize())
+app.use(passport.session())
 
-app.use(session({
-    store: MongoStore.create({
-        mongoUrl: process.env.URL_MONGODB_ATLAS,
-        dbName: "ecommerce",
-        collectionName: "cookies"
-    }),
-    secret: "mysecret",
-    resave: false,
-    saveUninitialized: false
-}))
+app.get("/", async (req, res) => {
+    res.render("sessions/login");
+});
 
 /* ------------------------------ Codigo socket ----------------------------- */
 // const io = new Server(server);
@@ -198,38 +204,38 @@ app.use(session({
 
 /* -------------------- Productos para hacer las pruebas -------------------- */
 
-await productModel.create([
-    {
-        title: "Product 16",
-        description: "Description for Product 16",
-        code: "CODE16",
-        category: "Category 1",
-        price: 115,
-        stock: 115,
-        status: true,
-        thumbnail: ["hola"]
-    },
-    {
-        title: "Product 17",
-        description: "Description for Product 17",
-        code: "CODE17",
-        category: "Category 1",
-        price: 116,
-        stock: 116,
-        status: true,
-        thumbnail: ["hola"]
-    },
-    {
-        title: "Product 18",
-        description: "Description for Product 18",
-        code: "CODE18",
-        category: "Category 1",
-        price: 117,
-        stock: 117,
-        status: true,
-        thumbnail: ["hola"]
-    }
-    ])
+// await productModel.create([
+//     {
+//         title: "Product 16",
+//         description: "Description for Product 16",
+//         code: "CODE16",
+//         category: "Category 1",
+//         price: 115,
+//         stock: 115,
+//         status: true,
+//         thumbnail: ["hola"]
+//     },
+//     {
+//         title: "Product 17",
+//         description: "Description for Product 17",
+//         code: "CODE17",
+//         category: "Category 1",
+//         price: 116,
+//         stock: 116,
+//         status: true,
+//         thumbnail: ["hola"]
+//     },
+//     {
+//         title: "Product 18",
+//         description: "Description for Product 18",
+//         code: "CODE18",
+//         category: "Category 1",
+//         price: 117,
+//         stock: 117,
+//         status: true,
+//         thumbnail: ["hola"]
+//     }
+//     ])
     // ,
 //     {
 //         title: "Product 19",

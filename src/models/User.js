@@ -12,17 +12,24 @@ const userSchema = new Schema({
   },
   email: {
     type: String,
+    required: true,
     unique: true,
     index: true,
   },
-  gender: {
-    type: String,
+  age: {
+    type: Number,
     required: true,
+    default: 0
   },
   password: {
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: false
+  }
 });
 mongoose.set("strictQuery", false);
 export const userModel = mongoose.model("users", userSchema); 

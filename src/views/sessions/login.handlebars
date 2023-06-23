@@ -1,21 +1,23 @@
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Form de login</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>Iniciar sesion</h1>
     <form action="/sessions/login" method="post">
-        Email:
-        <input type="text" name="email" /><br />
-        Password:
-        <input type="text" name="password" /><br />
-        <input type="submit" value="Iniciar sesion" />
+      Email:
+      <input type="text" name="email" /><br />
+      Password:
+      <input type="password" name="password" /><br />
+      <input type="submit" value="Iniciar sesion" />
     </form>
-</body>
+     <button onclick="location.href='/sessions/register'">Volver al inicio</button> 
+
+  </body>
 
 </html>
