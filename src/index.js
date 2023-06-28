@@ -19,7 +19,7 @@ import sessionRouter from "./router/session.routes.js";
 import FileStore from "session-file-store";
 import { constrainedMemory } from "process";
 import "./passportStrategies.js";
-
+// import "./router/jwt.router.js"
 
 //Configuraciones
 
@@ -204,27 +204,27 @@ app.get("/", async (req, res) => {
 
 /* -------------------- Productos para hacer las pruebas -------------------- */
 
-// await productModel.create([
-//     {
-//         title: "Product 16",
-//         description: "Description for Product 16",
-//         code: "CODE16",
-//         category: "Category 1",
-//         price: 115,
-//         stock: 115,
-//         status: true,
-//         thumbnail: ["hola"]
-//     },
-//     {
-//         title: "Product 17",
-//         description: "Description for Product 17",
-//         code: "CODE17",
-//         category: "Category 1",
-//         price: 116,
-//         stock: 116,
-//         status: true,
-//         thumbnail: ["hola"]
-//     },
+await productModel.create([
+    {
+        title: "Product 16",
+        description: "Description for Product 16",
+        code: "CODE16",
+        category: "Category 1",
+        price: 115,
+        stock: 115,
+        status: true,
+        thumbnail: ["hola"]
+    },
+    {
+        title: "Product 17",
+        description: "Description for Product 17",
+        code: "CODE17",
+        category: "Category 1",
+        price: 116,
+        stock: 116,
+        status: true,
+        thumbnail: ["hola"]
+    },])
 //     {
 //         title: "Product 18",
 //         description: "Description for Product 18",
