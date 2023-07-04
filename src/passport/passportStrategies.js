@@ -1,8 +1,8 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
-import { userModel } from "./models/User.js";
-import { compareData, hashData } from "./utils/bcrypt.js";
+import { userModel } from "../models/User.js";
+// import { compareData, hashData } from "../passport/passportStrategies.js";
 
 // Estrategia passport-local (registro)
 passport.use(
@@ -62,7 +62,6 @@ passport.use(
             callbackURL: "http://localhost:4000/sessions/github",
         },
         async (accesToken, refreshToken, profile, done) => {
-            // console.log(profile);
             const { name, email, id, login } = profile._json;
             try {
                 if (email === null) {
@@ -71,17 +70,18 @@ passport.use(
                         return done(null, userBD)
                     }
                     else {
+                        const hashPassword = await hashData("123");
                         const user = {
                             first_name: login,
                             last_name: " ",
                             email: id.toString(),
-                            password: "123"
+                            password: hashPassword
                         }
                         const newUserBD = await userModel.create(user)
                         return done(null, newUserBD)
                     }
                 }
-                else{
+                else {
                     const user = {
                         first_name: name.split(" ")[0] || login,
                         last_name: name.split(" ")[1] || " ",

@@ -1,11 +1,10 @@
 import express from "express";
 import productRouter from './router/product.routes.js'
-import { __dirname } from "./path.js";
+import { __dirname } from "./utils/path.js";
 import multer from "multer";
 import cartRouter from "./router/cart.routes.js"
 import { engine } from "express-handlebars";
 import * as path from "path";
-import { Server } from "socket.io";
 import mongoose from "mongoose";
 import { productModel } from "./models/Products.js";
 import { cartModel } from "./models/Cart.js";
@@ -16,17 +15,18 @@ import MongoStore from "connect-mongo";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import sessionRouter from "./router/session.routes.js";
+import jwtRouter from './router/jwt.routes.js'
 import FileStore from "session-file-store";
-import { constrainedMemory } from "process";
-import "./passportStrategies.js";
-// import "./router/jwt.router.js"
+import "../src/passport/passportStrategies.js";
+import cors from "cors";
+import config from "./utils/config.js";
+
 
 //Configuraciones
-
 const fileStore = FileStore(session);
 const app = express();
 mongoose
-    .connect(process.env.URL_MONGODB_ATLAS, {
+    .connect(config.url_mongodb_atlas, {
         dbName: "ecommerce",
     })
     .then(() => {
@@ -34,12 +34,9 @@ mongoose
     })
     .catch((error) => console.log("Error en MongoDB Atlas :", error));
 
-
 app.use(cookieParser())
 const PORT = 4000
 // await cartModel.create([{}]);
-
-
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -52,7 +49,6 @@ const storage = multer.diskStorage({
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname, "./views"))
-
 
 const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
@@ -79,37 +75,13 @@ app.use('/api/products', productRouter)
 app.use("/api/cart", cartRouter);
 app.use('/', express.static(__dirname + '/public'))
 app.use("/sessions", sessionRouter)
+app.use("/api/jwt", jwtRouter)
+app.use(cors())
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)
     console.log(req.file)
     res.send("Imagen subida")
-})
-
-
-//Crear cookie
-app.get('/setCookie', (req, res) => {
-    //Nombre cookie - Valor asociado a dicha cookie
-    res.cookie('CookieCookie', "Esta es mi primer cookie").json({ message: "Creando una cookie" })
-})
-
-//Consultar cookie
-
-app.get('/getCookie', (req, res) => {
-    //Nombre cookie - Valor asociado a dicha cookie
-    res.send(req.cookies)
-})
-
-app.get('/setCookie', (req, res) => {
-    //Nombre cookie - Valor asociado a dicha cookie
-    res.cookie('CookieCookie', "Esta es mi primer cookie")
-    res.send("Cookie creada")
-})
-
-//Consultar cookie
-app.get('/getCookie', (req, res) => {
-    //Nombre cookie - Valor asociado a dicha cookie
-    res.send(req.cookies)
 })
 
 //Passport

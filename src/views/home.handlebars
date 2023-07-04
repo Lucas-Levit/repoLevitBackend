@@ -1,12 +1,12 @@
-  {{#if alertMessage}}
-      <script>
-        const Toast = Swal.mixin({ toast: true, position: "top-end",
-        showConfirmButton: false, timer: 5000, timerProgressBar: true, didOpen:
-        (toast) => { toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer); }, });
-        Toast.fire({ icon: '{{type}}', title: '{{title}}' });
-      </script>
-    {{/if}}
+{{#if alertMessage}}
+  <script>
+    const Toast = Swal.mixin({ toast: true, position: "top-end",
+    showConfirmButton: false, timer: 5000, timerProgressBar: true, didOpen:
+    (toast) => { toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer); }, }); Toast.fire({
+    icon: '{{type}}', title: '{{title}}' });
+  </script>
+{{/if}}
 
 <button onclick="location.href='/sessions/logout'">LOGOUT</button>
 <h2> Hola {{user.first_name}} {{user.last_name}}</h2>
@@ -39,7 +39,7 @@
           <p class="card-text">categoria: {{category}}</p>
         </div>
       </div>
-      <form action="/api/products" method="post">
+      <form action="/api/products/" method="post">
         <div class="mb-3">
           <input
             placeholder="CANTIDAD"
@@ -54,8 +54,8 @@
         <button
           class="btn btn-primary"
           type="submit"
+          value={{this._id}}
           name="id_prod"
-          value="{{this._id}}"
         >AÑADIR ARTÍCULO AL CARRITO</button>
       </form>
     {{/each}}

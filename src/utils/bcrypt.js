@@ -1,4 +1,7 @@
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken'
+import config from "./config.js";
+
 
 // encriptar una contraseña
 // export const createHash = (password) => bcrypt.hashSync(password, bcrypt.genSaltSync(parseInt(process.env.SALT)))
@@ -18,3 +21,8 @@ export const hashData = async (data) => {
 export const compareData = async (data, hashData) => {
     return bcrypt.compare(data, hashData);
 };
+
+export const generateToken = (user) => {
+    const token = jwt.sign({ user }, config.secret_key_jwt, { expiresIn: '1h' })
+    return token
+}

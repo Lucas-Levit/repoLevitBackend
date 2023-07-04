@@ -1,9 +1,67 @@
 import { Router } from "express";
 import { productModel } from "../models/Products.js";
 import { userModel } from "../models/User.js";
-
+import { cartModel } from "../models/Cart.js";
 
 const productRouter = Router();
+
+productRouter.get("/", async (req, res) => {
+    try {
+        const userId = req.session.passport.user;
+        const user = await userModel.findById(userId).populate("cart").lean().exec();
+        if (!user.cart) {
+            const cart = new cartModel();
+            await cart.save();
+            user.cart = cart._id;
+            await userModel.findByIdAndUpdate(userId, { cart: cart._id }).exec();
+            user.cart = cart;
+        }
+        const getProducts = await productModel.find().lean().exec();
+        const products = getProducts.map(({ title, description, price, thumbnail, code, category, stock, status, _id }) => ({
+            title,
+            description,
+            price,
+            thumbnail,
+            code,
+            category,
+            stock,
+            status,
+            _id,
+        }));
+        const profile = {
+            first_name: user.first_name,
+            last_name: user.last_name,
+        };
+        const isAdmin = user.role === "admin";
+
+        res.render("home", {
+            titulo: "HOME - TODOS LOS PRODUCTOS",
+            products,
+            user: profile,
+            isAdmin,
+            cart: user.cart,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener los productos" });
+    }
+});
+
+productRouter.post("/", async (req, res) => {
+    // try {
+    const { id_prod, quantity } = req.body;
+    const userId = req.session.passport.user;
+    let cart = await userModel.findById(userId)
+    cart = cart.cart.toString()
+    const nuevoProducto = {id_prod, quantity};
+    await cartModel.findOneAndUpdate({ _id: cart }, { $push: { products: nuevoProducto } }
+    );
+    res.redirect("/api/products/")
+});
+
+export default productRouter;
+
+
 // productRouter.get("/", async (req, res) => {
 //     const { limit = 10, page = 1, sort = "" } = req.query;
 //     const query = {};
@@ -56,40 +114,3 @@ const productRouter = Router();
 //         res.status(500).json(report);
 //     }
 // });
-
-productRouter.get("/", async (req, res) => {
-    const userId = req.session.passport.user; // Obtener el ID del usuario desde req.session.passport.user
-    const user = await userModel.findById(userId).lean().exec(); // Buscar el usuario por ID
-    const getProducts = await productModel.find();
-    const products = getProducts.map(({ title, description, price, thumbnail, code, category, stock, status }) => ({
-        title,
-        description,
-        price,
-        thumbnail,
-        code,
-        category,
-        stock,
-        status,
-    }));
-    const profile = {
-        first_name: user.first_name,
-        last_name: user.last_name,
-    };
-    function isAdmin() {
-        const admin = user.role;
-        if (admin === "user") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    res.render("home", {
-        titulo: "HOME - TODOS LOS PRODUCTOS",
-        products: products,
-        user: profile,
-        isAdmin: user.isAdmin,
-    });
-});
-
-
-export default productRouter;
