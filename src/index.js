@@ -5,9 +5,8 @@ import multer from "multer";
 import cartRouter from "./router/cart.routes.js"
 import { engine } from "express-handlebars";
 import * as path from "path";
-import mongoose from "mongoose";
-import { productModel } from "./models/Products.js";
-import { cartModel } from "./models/Cart.js";
+import { productModel } from "./DAL/mongoDB/models/Products.js";
+import { cartModel } from "./DAL/mongoDB/models/Cart.js";
 import "dotenv/config";
 import "./utils/bcrypt.js"
 import passport from "passport";
@@ -19,20 +18,16 @@ import jwtRouter from './router/jwt.routes.js'
 import FileStore from "session-file-store";
 import "../src/passport/passportStrategies.js";
 import cors from "cors";
-import config from "./utils/config.js";
+import config from "./config/config.js";
+import "./config/configDB.js"
+import usersRouter from "./router/users.routes.js"
+import messagesRouter from "./router/messages.router.js";
+
 
 
 //Configuraciones
 const fileStore = FileStore(session);
 const app = express();
-mongoose
-    .connect(config.url_mongodb_atlas, {
-        dbName: "ecommerce",
-    })
-    .then(() => {
-        console.log("DB is connected");
-    })
-    .catch((error) => console.log("Error en MongoDB Atlas :", error));
 
 app.use(cookieParser())
 const PORT = 4000
@@ -57,6 +52,8 @@ const server = app.listen(PORT, () => {
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use ("/api/users" , usersRouter)
+app.use("/api/message" , messagesRouter)
 const upload = (multer({ storage: storage }))
 
 app.use(session({

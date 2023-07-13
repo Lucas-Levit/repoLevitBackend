@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { Router } from "express";
-import { cartModel } from "../models/Cart.js";
+import { cartModel } from "../DAL/mongoDB/models/Cart.js";
 
 const cartRouter = Router();
 
@@ -108,6 +108,30 @@ cartRouter.put("/:cid", async (req, res) => {
         { new: true }
     );
     res.send(cart);
+});
+
+
+cartRouter.post("/:cid/purchase", async (req, res) => {
+    const cid = req.params.cid;
+    try {
+        const cart = await cartModel.findById(cid).populate("products.id_prod");
+        // Verificar el stock y restarlo del producto
+        const productsToPurchase = cart.products.filter(product => {
+            const productInStock = product.id_prod;
+            if (product.quantity <= productInStock.stock) {
+                productInStock.stock -= product.quantity;
+                productInStock.save();
+                return true;
+            }
+            return false;
+        });
+        // Actualizar los productos del carrito con los productos a comprar
+        cart.products = productsToPurchase;
+        await cart.save();
+        res.send("Proceso de compra finalizado exitosamente");
+    } catch (error) {
+        res.status(500).send("Error al finalizar el proceso de compra");
+    }
 });
 
 export default cartRouter;

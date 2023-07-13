@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { productModel } from "../models/Products.js";
-import { userModel } from "../models/User.js";
-import { cartModel } from "../models/Cart.js";
+import { productModel } from "../DAL/mongoDB/models/Products.js";
+import { userModel } from "../DAL/mongoDB/models/User.js";
+import { cartModel } from "../DAL/mongoDB/models/Cart.js";
 
 const productRouter = Router();
 
@@ -48,18 +48,22 @@ productRouter.get("/", async (req, res) => {
 });
 
 productRouter.post("/", async (req, res) => {
-    // try {
-    const { id_prod, quantity } = req.body;
-    const userId = req.session.passport.user;
-    let cart = await userModel.findById(userId)
-    cart = cart.cart.toString()
-    const nuevoProducto = {id_prod, quantity};
-    await cartModel.findOneAndUpdate({ _id: cart }, { $push: { products: nuevoProducto } }
-    );
-    res.redirect("/api/products/")
+    try {
+        const { id_prod, quantity } = req.body;
+        const userId = req.session.passport.user;
+        let cart = await userModel.findById(userId);
+        cart = cart.cart.toString();
+        const nuevoProducto = { id_prod, quantity };
+        await cartModel.findOneAndUpdate({ _id: cart }, { $push: { products: nuevoProducto } });
+        res.redirect("/api/products/");
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al agregar el producto" });
+    }
 });
 
 export default productRouter;
+
 
 
 // productRouter.get("/", async (req, res) => {

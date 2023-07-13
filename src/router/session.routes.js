@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { userModel } from "../models/User.js";
 import { hashData, compareData } from "../utils/bcrypt.js";
 import passport from "passport";
+import { userModel } from "../DAL/mongoDB/models/User.js";
+import { usersService } from "../services/users.service.js";
 
 const sessionRouter = Router();
 
