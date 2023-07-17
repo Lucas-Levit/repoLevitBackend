@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import { userModel } from "../DAL/mongoDB/models/User.js";
-// import { compareData, hashData } from "../passport/passportStrategies.js";
+import { compareData, hashData } from "../utils/bcrypt.js";
 
 // Estrategia passport-local (registro)
 passport.use(

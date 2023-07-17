@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
 })
 app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
-app.set("views", path.resolve(__dirname, "./views"))
+app.set("views", path.resolve(__dirname, "./src/views"))
 
 const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
@@ -52,8 +52,7 @@ const server = app.listen(PORT, () => {
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use ("/api/users" , usersRouter)
-app.use("/api/message" , messagesRouter)
+
 const upload = (multer({ storage: storage }))
 
 app.use(session({
@@ -73,6 +72,8 @@ app.use("/api/cart", cartRouter);
 app.use('/', express.static(__dirname + '/public'))
 app.use("/sessions", sessionRouter)
 app.use("/api/jwt", jwtRouter)
+app.use ("/api/users" , usersRouter)
+app.use("/api/message" , messagesRouter)
 app.use(cors())
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes

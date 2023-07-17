@@ -34,7 +34,7 @@ productRouter.get("/", async (req, res) => {
         };
         const isAdmin = user.role === "admin";
 
-        res.render("home", {
+        res.render("home.handlebars", {
             titulo: "HOME - TODOS LOS PRODUCTOS",
             products,
             user: profile,
