@@ -2,7 +2,7 @@ import { Router } from "express";
 import { productModel } from "../DAL/mongoDB/models/Products.js";
 import { userModel } from "../DAL/mongoDB/models/User.js";
 import { cartModel } from "../DAL/mongoDB/models/Cart.js";
-import Ticket from "../DAL/mongoDB/models/Ticket.js";
+import { ticketModel } from "../DAL/mongoDB/models/Ticket.js";
 
 
 const cartRouter = Router();
@@ -139,6 +139,9 @@ cartRouter.put("/:cid", async (req, res) => {
 
 cartRouter.post("/:cid/purchase", async (req, res) => {
     const cid = req.params.cid;
+    const user = await userModel.find({cart:req.params.cid}) 
+    const primerUsuario = user[0];
+    const emailPrimerUsuario = primerUsuario.email;
     try {
         const cart = await cartModel.findById(cid).populate("products.id_prod");
         const productsToPurchase = [];
@@ -156,24 +159,24 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
             }
         }
         // Crear el ticket con los datos de la compra
-        const ticket = new Ticket({
-            code: generateUniqueCode(),
-            amount: calculateTotalAmount(productsToPurchase),
-            purchaser: cart.purchaser,
+        const ticket = await ticketModel.create({
+            amount: 100, 
+            purchaser: emailPrimerUsuario 
         });
-        await ticket.save();
+        
         // Actualizar el carrito solo con los productos no comprados
         cart.products = productsNotPurchased;
         await cart.save();
         res.send({
             message: "Proceso de compra finalizado exitosamente",
-            ticket: ticket, // Utilizamos la variable ticket creada anteriormente
-            productsNotPurchased: productsNotPurchased, // Utilizamos la variable productsNotPurchased creada anteriormente
+            ticket: ticket,
+            productsNotPurchased: productsNotPurchased,
         });
     } catch (error) {
         console.error(error);
         res.status(500).send("Error al finalizar el proceso de compra");
     }
 });
+
 
 export default cartRouter;

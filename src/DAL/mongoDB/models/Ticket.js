@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 
-const ticketSchema = new mongoose.Schema({
-
+const ticketSchema = new Schema({
     code: {
         type: String,
         unique: true,
         required: true,
+        default: generateCode
     },
     purchase_datetime: {
         type: Date,
@@ -19,9 +19,18 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-
 });
 
-const Ticket = mongoose.model("Ticket", ticketSchema);
 
-export default Ticket;
+function generateCode() {
+    const codeLength = 6;
+    let code = "";
+    const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (let i = 0; i < codeLength; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        code += characters.charAt(randomIndex);
+    }
+    return code;
+}
+
+export const ticketModel = model("ticket", ticketSchema);
