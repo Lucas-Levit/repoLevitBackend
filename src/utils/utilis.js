@@ -12,8 +12,8 @@ export const generateUser = () => {
     return {
         title: fakerES.commerce.productName(),
         price: fakerES.commerce.price(),
-        stock: fakerES.commerce.stock(),
-        code: fakerES.commerce.code(),
+        stock: 10,
+        
         
     }
 

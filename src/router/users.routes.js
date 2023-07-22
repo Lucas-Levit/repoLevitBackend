@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { usersController } from "../controllers/users.controller.js";
 import EErrors from "../services/errors/enum.js";
-import CustomError from "../middlewares/error.js";
+import CustomError from "../services/errors/CustomError.js";
 import { generateUserErrorInfo } from "../services/errors/info.js";
 import { generateUser } from '../utils/utilis.js'
 
@@ -9,7 +9,7 @@ import { generateUser } from '../utils/utilis.js'
 
 const router = Router();
 
-router.get("/", usersController.findAllUsers);
+// router.get("/", usersController.findAllUsers);
 router.get("/:idUser", usersController.findOneUser);
 // router.post("/", usersController.createOneUser);
 // router.delete("/:idUser", usersController.deleteOne);

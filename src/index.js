@@ -78,7 +78,7 @@ app.use("/api/jwt", jwtRouter)
 app.use ("/api/users" , usersRouter)
 app.use("/api/message" , messagesRouter)
 app.use(cors())
-app.use('/products',getAllusers)
+app.use('/productos',getAllusers)
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)
