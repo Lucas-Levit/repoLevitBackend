@@ -22,8 +22,9 @@ import config from "./config/config.js";
 import "./config/configDB.js"
 import usersRouter from "./router/users.routes.js"
 import messagesRouter from "./router/messages.router.js";
-
-
+import compression from "express-compression"
+import errorHandler from "./middlewares/error.js";
+import getAllusers from './router/users.routes.js'
 
 //Configuraciones
 const fileStore = FileStore(session);
@@ -52,6 +53,8 @@ const server = app.listen(PORT, () => {
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(compression())
+
 
 const upload = (multer({ storage: storage }))
 
@@ -75,6 +78,7 @@ app.use("/api/jwt", jwtRouter)
 app.use ("/api/users" , usersRouter)
 app.use("/api/message" , messagesRouter)
 app.use(cors())
+app.use('/products',getAllusers)
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)
@@ -85,7 +89,7 @@ app.post('/upload', upload.single('product'), (req, res) => {
 //Passport
 app.use(passport.initialize())
 app.use(passport.session())
-
+app.use(errorHandler);
 app.get("/", async (req, res) => {
     res.render("sessions/login");
 });
