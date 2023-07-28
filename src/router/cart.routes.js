@@ -4,7 +4,6 @@ import { userModel } from "../DAL/mongoDB/models/User.js";
 import { cartModel } from "../DAL/mongoDB/models/Cart.js";
 import { ticketModel } from "../DAL/mongoDB/models/Ticket.js";
 
-
 const cartRouter = Router();
 
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
@@ -51,39 +50,6 @@ cartRouter.delete("/:cid", async (req, res) => {
         res.status(500).send("Error al eliminar el carrito");
     }
 });
-cartRouter.post("/:cid/products/:pid", async (req, res) => {
-    try {
-        await cartModel.create([{}], { maxTimeMS: 0 });
-        const cid = req.params.cid;
-        const pid = req.params.pid;
-        const { quantity } = req.body;
-        const parsedQuantity = parseInt(quantity);
-        const cart = await cartModel.findById({ _id: cid });
-        const product = await productModel.findById(pid);
-        if (!cart || !product) {
-            return res.status(404).send("Carrito o producto no encontrado");
-        }
-        if (parsedQuantity > product.stock) {
-            return res.status(400).send("No hay suficiente stock disponible");
-        }
-        product.stock -= parsedQuantity;
-        await product.save();
-        const addProductToCart = {
-            id_prod: pid,
-            quantity: parsedQuantity,
-        };
-        cart.products.push(addProductToCart);
-        await cart.save();
-        console.log(cart);
-        console.log(addProductToCart);
-        res.send("Producto añadido correctamente");
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Error al agregar el producto al carrito");
-    }
-});
-
-
 
 cartRouter.get("/:cid", async (req, res) => {
     const cid = req.params.cid;
@@ -136,12 +102,8 @@ cartRouter.put("/:cid", async (req, res) => {
     }
 });
 
-
 cartRouter.post("/:cid/purchase", async (req, res) => {
     const cid = req.params.cid;
-    const user = await userModel.find({cart:req.params.cid}) 
-    const primerUsuario = user[0];
-    const emailPrimerUsuario = primerUsuario.email;
     try {
         const cart = await cartModel.findById(cid).populate("products.id_prod");
         const productsToPurchase = [];
@@ -160,8 +122,9 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
         }
         // Crear el ticket con los datos de la compra
         const ticket = await ticketModel.create({
-            amount: 100, 
-            purchaser: emailPrimerUsuario 
+            // Aquí debes establecer correctamente el monto y el comprador según la lógica de tu aplicación
+            amount: 100,
+            purchaser: "correo-del-comprador@example.com", 
         });
         
         // Actualizar el carrito solo con los productos no comprados
@@ -177,6 +140,5 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
         res.status(500).send("Error al finalizar el proceso de compra");
     }
 });
-
 
 export default cartRouter;

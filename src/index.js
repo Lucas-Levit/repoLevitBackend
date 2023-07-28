@@ -25,10 +25,13 @@ import messagesRouter from "./router/messages.router.js";
 import compression from "express-compression"
 import errorHandler from "./middlewares/error.js";
 import getAllusers from './router/users.routes.js'
+import { addLogger } from "./utils/logger.js";
+import testRouter from "./router/test.routes.js";
 
 //Configuraciones
 const fileStore = FileStore(session);
 const app = express();
+
 
 app.use(cookieParser())
 const PORT = 4000
@@ -50,6 +53,7 @@ const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
 })
 
+
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -69,22 +73,27 @@ app.use(session({
     saveUninitialized: false
 }))
 
+app.use(addLogger)
 //Routes
 app.use('/api/products', productRouter)
 app.use("/api/cart", cartRouter);
 app.use('/', express.static(__dirname + '/public'))
 app.use("/sessions", sessionRouter)
 app.use("/api/jwt", jwtRouter)
-app.use ("/api/users" , usersRouter)
-app.use("/api/message" , messagesRouter)
+app.use("/api/users", usersRouter)
+app.use("/api/message", messagesRouter)
 app.use(cors())
-app.use('/productos',getAllusers)
+app.use('/productos', getAllusers)
+app.use("/loggerTest", testRouter);
+
+
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)
     console.log(req.file)
     res.send("Imagen subida")
 })
+
 
 //Passport
 app.use(passport.initialize())
@@ -93,6 +102,8 @@ app.use(errorHandler);
 app.get("/", async (req, res) => {
     res.render("sessions/login");
 });
+
+
 
 /* ------------------------------ Codigo socket ----------------------------- */
 // const io = new Server(server);
