@@ -87,6 +87,7 @@ app.use('/productos', getAllusers)
 app.use("/loggerTest", testRouter);
 
 
+
 app.post('/upload', upload.single('product'), (req, res) => {
     //Imagenes
     console.log(req.body)

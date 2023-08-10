@@ -19,12 +19,3 @@ export const generateUser = () => {
 
 }
 
-// export const products = () => {
-//     return {
-//         title: fakerES.commerce.productName(),
-//         price: fakerES.commerce.price(),
-//         stock: 10,
-//         id: fakerES.database.mongodbObjectId(),
-//         image: fakerES.image.urlPicsumPhotos()
-//     }
-// }

@@ -2,3 +2,12 @@ info: GET en /sessions/register - 18:59:17
 info: GET en /sessions/css/style.css - 18:59:18
 info: GET en /sessions/js/main.js - 18:59:18
 info: GET en /loggerTest - 18:59:35
+info: GET en /sessions/register - 13:40:02
+info: GET en /sessions/css/style.css - 13:40:02
+info: GET en /sessions/js/main.js - 13:40:02
+info: GET en /favicon.ico - 13:40:02
+info: GET en /login - 13:40:07
+info: POST en /api/jwt/forgot-password - 11:26:57
+info: POST en /api/jwt/forgot-password - 11:29:20
+info: POST en /api/jwt/reset-password/:token - 11:30:14
+info: POST en /api/jwt/reset-password/:token - 11:33:19

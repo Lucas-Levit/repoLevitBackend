@@ -33,6 +33,11 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "carts",
     },
+    owner: {
+        type: String, 
+        default: "admin", 
+        required: true,
+    },
 });
 
 mongoose.set("strictQuery", false);

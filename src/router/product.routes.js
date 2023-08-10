@@ -5,6 +5,7 @@ import { cartModel } from "../DAL/mongoDB/models/Cart.js";
 
 const productRouter = Router();
 
+
 productRouter.get("/", async (req, res) => {
     try {
         const userId = req.session.passport.user;
