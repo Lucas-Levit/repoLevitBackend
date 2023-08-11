@@ -29,25 +29,23 @@ sessionRouter.post(
     passport.authenticate("register", {
         failureRedirect: "/api/products/errorLogin",
         successRedirect: "/sessions/login",
-
     })
 );
 //Vista de login
 sessionRouter.get("/login", (req, res) => {
     res.render("sessions/login");
 });
-// sessionRouter.post("/login", async (req, res) => {
-//     const { email, password } = req.body;
-//     const user = await userModel.findOne({ email, password }).lean().exec();
-//     if (!user) {
-//         return res.status(401).render("errors/base", {
-//             error: "Error en mail y/o contraseña",
-//         });
-//     }
-
-//     // req.session.user = user;
-//     res.redirect("/api/products");
-// });
+sessionRouter.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email, password }).lean().exec();
+    if (!user) {
+        return res.status(401).render("errors/base", {
+            error: "Error en mail y/o contraseña",
+        });
+    }
+    // req.session.user = user;
+    res.redirect("/api/products");
+});
 
 sessionRouter.post(
     "/login",
