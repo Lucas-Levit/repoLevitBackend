@@ -36,8 +36,10 @@ sessionRouter.get("/login", (req, res) => {
     res.render("sessions/login");
 });
 sessionRouter.post("/login", async (req, res) => {
+    //console.log(req.body)
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email, password }).lean().exec();
+    const user = await userModel.findOne({email});
+    console.log(user)
     if (!user) {
         return res.status(401).render("errors/base", {
             error: "Error en mail y/o contraseña",

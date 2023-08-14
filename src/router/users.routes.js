@@ -6,7 +6,6 @@ import { generateUserErrorInfo } from "../services/errors/info.js";
 import { generateUser } from '../utils/utilis.js'
 
 
-
 const router = Router();
 
 // router.get("/", usersController.findAllUsers);

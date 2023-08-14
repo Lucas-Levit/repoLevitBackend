@@ -27,6 +27,8 @@ import errorHandler from "./middlewares/error.js";
 import getAllusers from './router/users.routes.js'
 import { addLogger } from "./utils/logger.js";
 import testRouter from "./router/test.routes.js";
+import swaggerJsdoc from  'swagger-jsdoc'
+import swaggerUiExpress from 'swagger-ui-express'
 
 //Configuraciones
 const fileStore = FileStore(session);
@@ -49,6 +51,24 @@ app.engine("handlebars", engine())
 app.set("view engine", "handlebars")
 app.set("views", path.resolve(__dirname, "./src/views"))
 
+
+const swaggerOptions={
+    definition:{
+        openapi:'3.0.1',
+        info:{
+            title:" Documentacion de las APIs",
+            description:" Informacion pert y usuarios",
+            version: '1.0.0',
+            contact:{
+                name:"Lucas Levit",
+                url: "https://www.linkedin.com/in/lucas-levit-87b8961b3/"
+            }
+        }
+    },
+    apis: [`${process.cwd()}/src/docs/**/*.yaml`],
+}
+
+const spec = swaggerJsdoc(swaggerOptions)
 const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
 })
@@ -85,7 +105,7 @@ app.use("/api/message", messagesRouter)
 app.use(cors())
 app.use('/productos', getAllusers)
 app.use("/loggerTest", testRouter);
-
+app.use('/apidoc',swaggerUiExpress.serve,swaggerUiExpress.setup(spec))
 
 
 app.post('/upload', upload.single('product'), (req, res) => {
