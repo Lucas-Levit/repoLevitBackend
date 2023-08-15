@@ -67,8 +67,8 @@ const swaggerOptions={
     },
     apis: [`${process.cwd()}/src/docs/**/*.yaml`],
 }
-
 const spec = swaggerJsdoc(swaggerOptions)
+
 const server = app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
 })

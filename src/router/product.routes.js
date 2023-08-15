@@ -2,9 +2,10 @@ import { Router } from "express";
 import { productModel } from "../DAL/mongoDB/models/Products.js";
 import { userModel } from "../DAL/mongoDB/models/User.js";
 import { cartModel } from "../DAL/mongoDB/models/Cart.js";
+import passport from "passport";
+import session from "express-session";
 
 const productRouter = Router();
-
 
 productRouter.get("/", async (req, res) => {
     try {
@@ -17,6 +18,7 @@ productRouter.get("/", async (req, res) => {
             await userModel.findByIdAndUpdate(userId, { cart: cart._id }).exec();
             user.cart = cart;
         }
+
         const getProducts = await productModel.find().lean().exec();
         const products = getProducts.map(({ title, description, price, thumbnail, code, category, stock, status, _id }) => ({
             title,
@@ -29,12 +31,13 @@ productRouter.get("/", async (req, res) => {
             status,
             _id,
         }));
+
         const profile = {
             first_name: user.first_name,
             last_name: user.last_name,
         };
-        const isAdmin = user.role === "admin";
 
+        const isAdmin = user.role === "admin";
         res.render("home.handlebars", {
             titulo: "HOME - TODOS LOS PRODUCTOS",
             products,
@@ -42,7 +45,8 @@ productRouter.get("/", async (req, res) => {
             isAdmin,
             cart: user.cart,
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error al obtener los productos" });
     }
@@ -64,7 +68,6 @@ productRouter.post("/", async (req, res) => {
 });
 
 export default productRouter;
-
 
 
 // productRouter.get("/", async (req, res) => {
