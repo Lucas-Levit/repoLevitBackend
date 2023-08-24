@@ -20,16 +20,19 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
         if (parsedQuantity > product.stock) {
             return res.status(400).send("No hay suficiente stock disponible");
         }
+
+        // Restar la cantidad del producto del stock
         product.stock -= parsedQuantity;
         await product.save();
+
+        // Agregar el producto al carrito
         const addProductToCart = {
             id_prod: pid,
             quantity: parsedQuantity,
         };
         cart.products.push(addProductToCart);
         await cart.save();
-        console.log(cart);
-        console.log(addProductToCart);
+
         res.send("Producto añadido correctamente");
     } catch (error) {
         console.log(error);
@@ -122,9 +125,12 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
         }
         // Crear el ticket con los datos de la compra
         const ticket = await ticketModel.create({
-            // Aquí debes establecer correctamente el monto y el comprador según la lógica de tu aplicación
-            amount: 100,
+            amount: 100, // Debes establecer el monto correctamente
             purchaser: "correo-del-comprador@example.com", 
+            products: productsToPurchase.map(product => ({
+                id_prod: product.id_prod,
+                quantity: product.quantity,
+            })),
         });
         
         // Actualizar el carrito solo con los productos no comprados
