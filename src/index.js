@@ -124,6 +124,23 @@ app.get("/", async (req, res) => {
     res.render("sessions/login");
 });
 
+//conection chat
+
+import {Server} from "socket.io"
+
+const io = new Server(server)
+
+io.on("connection" , (socket) => {
+    console.log("Nuevo cliente conectado")
+    
+    socket.on("send_message" , (data) => {
+        io.emit("receive_message" , data)
+    })
+
+    socket.on("disconnect" , () => {
+        console.log("Cliente desconectado");
+    })
+})
 
 
 /* ------------------------------ Codigo socket ----------------------------- */

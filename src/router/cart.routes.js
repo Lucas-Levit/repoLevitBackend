@@ -107,6 +107,7 @@ cartRouter.put("/:cid", async (req, res) => {
 
 cartRouter.post("/:cid/purchase", async (req, res) => {
     const cid = req.params.cid;
+    
     try {
         const cart = await cartModel.findById(cid).populate("products.id_prod");
         const productsToPurchase = [];
@@ -125,7 +126,7 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
         }
         // Crear el ticket con los datos de la compra
         const ticket = await ticketModel.create({
-            amount: 100, // Debes establecer el monto correctamente
+            amount: 100, 
             purchaser: "correo-del-comprador@example.com", 
             products: productsToPurchase.map(product => ({
                 id_prod: product.id_prod,
