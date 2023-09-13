@@ -39,7 +39,7 @@
           <p class="card-text">categoria: {{category}}</p>
         </div>
       </div>
-      <form action="/api/cart/:cid/products/:pid"" method="post">
+      <form action="/api/cart/{{../cartId}}/products/{{this._id}}" method="post">
         <div class="mb-3">
           <input
             placeholder="CANTIDAD"
@@ -53,7 +53,7 @@
         </div>
         <button
           class="btn btn-primary"
-          type="submit"
+          type="submit" 
           value={{this._id}}
           name="id_prod"
         >AÑADIR ARTÍCULO AL CARRITO</button>

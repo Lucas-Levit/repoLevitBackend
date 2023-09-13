@@ -19,6 +19,11 @@ const ticketSchema = new Schema({
         type: String,
         required: true,
     },
+
+    totalPrice: {
+        type: Number,
+        required: true,
+    },
 });
 
 

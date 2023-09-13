@@ -8,8 +8,7 @@ const cartRouter = Router();
 
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
     try {
-        const cid = req.params.cid;
-        const pid = req.params.pid;
+        const { cid, pid } = req.params;
         const { quantity } = req.body;
         const parsedQuantity = parseInt(quantity);
         const cart = await cartModel.findById(cid);
@@ -20,11 +19,9 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
         if (parsedQuantity > product.stock) {
             return res.status(400).send("No hay suficiente stock disponible");
         }
-
         // Restar la cantidad del producto del stock
         product.stock -= parsedQuantity;
         await product.save();
-
         // Agregar el producto al carrito
         const addProductToCart = {
             id_prod: pid,
@@ -33,12 +30,39 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
         cart.products.push(addProductToCart);
         await cart.save();
 
-        res.send("Producto añadido correctamente");
+// Crear el ticket con los datos de la compra
+const totalQuantity = cart.products.reduce((total, product) => total + product.quantity, 0);
+const totalPrice = await calcularPrecioTotal(cart.products); // Espera a la resolución de la promesa
+const ticket = await ticketModel.create({
+    amount: totalQuantity,
+    totalPrice: totalPrice, // Ahora es un valor numérico
+    purchaser: "correo-del-comprador@example.com",
+    products: cart.products.map(product => ({
+        id_prod: product.id_prod,
+        quantity: product.quantity,
+    })),
+});
+
+// Función para calcular el precio total de la compra
+async function calcularPrecioTotal(products) {
+    let totalPrice = 0;
+    for (const product of products) {
+        const productData = await productModel.findById(product.id_prod);
+        totalPrice += productData.price * product.quantity;
+    }
+    console.log("Total Price:", totalPrice);
+    return totalPrice;
+}
+
+
+// Envía la respuesta al cliente
+        res.send("Producto añadido al carrito y ticket de compra generado");
     } catch (error) {
         console.log(error);
         res.status(500).send("Error al agregar el producto al carrito");
     }
 });
+
 
 cartRouter.delete("/:cid", async (req, res) => {
     const cid = req.params.cid;
@@ -107,7 +131,7 @@ cartRouter.put("/:cid", async (req, res) => {
 
 cartRouter.post("/:cid/purchase", async (req, res) => {
     const cid = req.params.cid;
-    
+
     try {
         const cart = await cartModel.findById(cid).populate("products.id_prod");
         const productsToPurchase = [];
@@ -126,14 +150,14 @@ cartRouter.post("/:cid/purchase", async (req, res) => {
         }
         // Crear el ticket con los datos de la compra
         const ticket = await ticketModel.create({
-            amount: 100, 
-            purchaser: "correo-del-comprador@example.com", 
+            amount: 100,
+            purchaser: "correo-del-comprador@example.com",
             products: productsToPurchase.map(product => ({
                 id_prod: product.id_prod,
                 quantity: product.quantity,
             })),
         });
-        
+
         // Actualizar el carrito solo con los productos no comprados
         cart.products = productsNotPurchased;
         await cart.save();
