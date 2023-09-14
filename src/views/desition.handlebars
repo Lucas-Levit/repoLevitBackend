@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>¡Producto agregado al carrito!</h1>
+    <p>¿Deseas seguir comprando o finalizar la compra?</p>
+<form action="/carrito/{{cid}}/products/{{pid}}/decision" method="POST">
+    <input type="hidden" name="cid" value="{{cid}}">
+    <input type="hidden" name="pid" value="{{pid}}">
+    <input type="submit" name="decision" value="Seguir Comprando">
+    <input type="submit" name="decision" value="Finalizar Compra">
+</form>
+
+
+</body>
+</html>
