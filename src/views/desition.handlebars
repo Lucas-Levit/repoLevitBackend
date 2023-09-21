@@ -1,15 +1,36 @@
 <!DOCTYPE html>
-<html>
-<body>
-    <h1>¡Producto agregado al carrito!</h1>
-    <p>¿Deseas seguir comprando o finalizar la compra?</p>
-<form action="/carrito/{{cid}}/products/{{pid}}/decision" method="POST">
-    <input type="hidden" name="cid" value="{{cid}}">
-    <input type="hidden" name="pid" value="{{pid}}">
-    <input type="submit" name="decision" value="Seguir Comprando">
-    <input type="submit" name="decision" value="Finalizar Compra">
-</form>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.2/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5 text-center">
+        <h1>¡Producto agregado al carrito!</h1>
+        <p>¿Deseas seguir comprando o finalizar la compra?</p>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <form method="get" action="/api/products">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Seguir comprando
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <form method="post" action="/api/ticket/{{cart._doc._id}}">
+                    <input type="hidden" name="cartId" value="{{cart._doc._id}}">
+                    <button type="submit" class="btn btn-success btn-block">
+                        Finalizar compra
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
 </body>
+
 </html>

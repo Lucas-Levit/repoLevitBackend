@@ -14,13 +14,11 @@ Abre tu terminal y ejecuta el siguiente comando para clonar el repositorio:
 
 git clone <https://github.com/Lucas-Levit/repoLevitBackend.git>
 Instalar Dependencias
+
 Navega a la carpeta del proyecto clonado:
-
-
 cd repoLevitBackend
+
 Instala las dependencias necesarias:
-
-
 npm install
 Configuración de Variables de Entorno
 Crea un archivo .env en el directorio raíz del proyecto y agrega las variables de entorno necesarias. Aquí tienes un ejemplo de cómo podría ser:
@@ -37,7 +35,7 @@ npm run dev
 El servidor estará escuchando en el puerto 4000 por defecto.
 
 Acceder a la Aplicación
-Abre tu navegador web y navega a http://localhost:4000 para acceder a la aplicación.
+Abre tu navegador web y navega a http://localhost:4000/sessions/register para acceder a la aplicación.
 
 Funcionalidades
 Autenticación de Usuario:
@@ -47,11 +45,10 @@ Gestión de Productos:
 Explorar una lista de productos disponibles con detalles como título, descripción, precio, stock y estado.
 Agregar productos al carrito de compras.
 Carrito de Compras:
-Los usuarios pueden ver su carrito de compras, modificar la cantidad de artículos y eliminar artículos.
-Comprar productos del carrito, ajustando el stock de los productos en consecuencia.
+Los usuarios pueden ver su carrito, comprar productos, ajustando el stock de los productos en consecuencia.
 Interfaz de Usuario:
 La aplicación utiliza plantillas HTML para renderizar vistas utilizando Handlebars.
-El estilo se logra utilizando CSS.
+El estilo se logra utilizando CSS y Bootstrap.
 
 Rutas y Endpoints
 
@@ -83,6 +80,9 @@ DELETE /api/cart/:cid: Elimina el carrito de compras del usuario.
 
 Compra desde el Carrito:
 POST /api/cart/:cid/purchase: Procesa la compra de productos en el carrito del usuario.
+
+Administrar usuarios para el admin:
+GET / /api/users/useredit: El administrador va a poder gestionar a los usuarios, modificandoles su rol y eliminando el mismo
 
 Uso
 Registra un nuevo usuario utilizando el formulario de registro.

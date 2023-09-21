@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { transporter } from "../utils/nodemailer.js";
+import { transporter ,sendMail } from "../utils/nodemailer.js";
+
 
 const router = Router();
 let messages = [];
 router.get("/", async (req, res) => {
     try {
         res.render('chat', {})
-        await transporter.sendMail({
-            to: "lucassebas96@gmail.com",
-            subject: "Correo Coderhouse",
-            text: "Probando primer Email",
-        });
+        await sendMail(
+            "lucassebas96@gmail.com",
+            "Ticket de compra",
+            "Probando primer Email",
+        );
 
     } catch (error) {
         console.error(error);

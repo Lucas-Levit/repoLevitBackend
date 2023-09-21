@@ -29,6 +29,7 @@ import { addLogger } from "./utils/logger.js";
 import testRouter from "./router/test.routes.js";
 import swaggerJsdoc from  'swagger-jsdoc'
 import swaggerUiExpress from 'swagger-ui-express'
+import ticketRouter from "./router/ticket.routes.js";
 
 //Configuraciones
 const fileStore = FileStore(session);
@@ -37,7 +38,7 @@ const app = express();
 
 app.use(cookieParser())
 const PORT = 4000
-// await cartModel.create([{}]);
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -102,6 +103,7 @@ app.use("/sessions", sessionRouter)
 app.use("/api/jwt", jwtRouter)
 app.use("/api/users", usersRouter)
 app.use("/api/message", messagesRouter)
+app.use("/api/ticket" , ticketRouter)
 app.use(cors())
 app.use('/productos', getAllusers)
 app.use("/loggerTest", testRouter);
@@ -143,87 +145,6 @@ io.on("connection" , (socket) => {
 })
 
 
-/* ------------------------------ Codigo socket ----------------------------- */
-// const io = new Server(server);
-// io.on("connection", (socket) => {
-//     console.log("cliente conectado");
-//     socket.on("productoIngresado", async ([info]) => {
-//         const title = info.title;
-//         const description = info.description;
-//         const price = info.price;
-//         const thumbnail = info.thumbnail;
-//         const code = info.code;
-//         const status = info.status;
-//         const stock = info.stock;
-//         const category = info.category;
-//         await productManager.addProduct({
-//             title, description, price, thumbnail, code, status, stock, category
-//         });
-//         const newProducts = await productManager.getProducts();
-//         io.emit("nuevosproductos", newProducts);
-//     });
-
-
-//     socket.on("productoEliminado", async (id) => {
-//         await productManager.deleteProduct(id);
-//         const newProducts = await productManager.getProducts();
-//         io.emit("nuevosproductos", newProducts);
-//     });
-
-//     socket.on("carrito", async () => {
-//         await cartManager.deleteProduct(id);
-//         const newCarts = await cartManager.createCarrito();
-//         io.emit("nuevoCarrito", newCarts);
-//     });
-//     socket.on("nuevoCarrito", async (data) => {
-//         await cartManager.createCarrito(data);
-//         const newCarts = await cartManager.getCarts();
-//         io.emit("nuevosCarritos", newCarts);
-//     });
-//     socket.on("nuevoMensaje", async ([data]) => {
-//         const user = data.user;
-//         const mensaje = data.message;
-//         await messagesManager.addMessage(user, mensaje);
-//         const newMessage = await messagesManager.getMessages();
-//         io.emit("nuevosMensajes", newMessage);
-//     });
-// });
-
-
-
-/* ---------------------------- Codigo handlebars --------------------------- */
-//HBS
-// app.get("/", async (req, res) => {
-//     let products = await productManager.getProducts();
-//     res.render("home", {
-//         titulo: "primera prueba",
-//         products: products,
-//     });
-// });
-
-// app.get("/realtimeproducts", async (req, res) => {
-//     const getProducts = await productManager.getProducts();
-//     res.render("realTimeProducts", {
-//         titulo: "real time products",
-//         products: getProducts,
-//     });
-// });
-
-// app.get("/carts", async (req, res) => {
-//     const carts = await cartManager.getCarts();
-//     res.render("carts", {
-//         titulo: "Carrito",
-//         carts: carts,
-//     });
-// });
-
-// app.get("/chat", async (req, res) => {
-//     const messages = await messagesManager.getMessages();
-//     res.render("chat", {
-//         titulo: "chat",
-//         messages: messages,
-//     });
-// });
 
 /* -------------------- Productos para hacer las pruebas -------------------- */
 

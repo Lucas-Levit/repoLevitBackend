@@ -13,10 +13,10 @@ class UsersService {
 
     async findOneUser(id) {
         try {
-            const response = await usersMongo.findById(id);
+            const response = await usersMongo.findOneById(id);
             return response;
         } catch (error) {
-            return response;
+            return error;
         }
     }
 
@@ -35,6 +35,15 @@ class UsersService {
         try {
             const response = await usersMongo.deleteOne(id);
             return response;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    async changePremiumRole(id){
+        try {
+            const updateOneUser = await usersMongo.changePremiumRole(id)
+            return updateOneUser
         } catch (error) {
             return error;
         }

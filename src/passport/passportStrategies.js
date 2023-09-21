@@ -65,7 +65,7 @@ passport.use(
             const { name, email, id, login } = profile._json;
             try {
                 if (email === null) {
-                    const userBD = await userModel.findOne({ email: id.toString() })
+                    const userBD = await userModel.findOne({ email: id.toString() + "@gmail.com" })
                     if (userBD) {
                         return done(null, userBD)
                     }
@@ -74,7 +74,7 @@ passport.use(
                         const user = {
                             first_name: login,
                             last_name: " ",
-                            email: id.toString(),
+                            email: id.toString() + "@gmail.com",
                             password: hashPassword
                         }
                         const newUserBD = await userModel.create(user)

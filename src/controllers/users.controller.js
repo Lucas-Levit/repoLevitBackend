@@ -13,7 +13,7 @@ class UsersController {
     async findOneUser(req, res) {
         const { idUser } = req.params;
         try {
-            const user = await usersService.findOneUser(idUser); // Usar idUser en lugar de id
+            const user = await usersService.findOneUser(idUser); 
             res.status(200).json({ message: "User", user });
         } catch (error) {
             res.status(500).json({ message: "Error", error });
@@ -25,7 +25,7 @@ class UsersController {
         const { first_name, last_name, email, password } = req.body;
         if (!first_name || !last_name || !email || !password) {
             res.status(401).json({ message: "Faltan algunos datos" });
-            return; // Añadir un return para evitar que se ejecute el resto de la función.
+            return; 
         }
         try {
             const newUser = await usersService.createOneUser({
@@ -44,11 +44,32 @@ class UsersController {
         const { idUser } = req.params
         try {
             const user = await usersService.deleteOneUser(idUser)
-            res.status(200).json({ message: "Usuario borrado", user })
+            res.redirect("/api/users/useredit")
         } catch (error) {
             res.status(500).json({ message: "Error", error })
         }
     }
+
+    async editUsers (req, res) {
+        
+        try {
+            const users = await usersService.findAllUsers()
+            res.status(200).render('adminUser', {users: users});
+        } catch (error) {
+            res.status(500).json({ message: "Error", error })
+        }
+    }
+    
+    async changePremiumRole (req, res) {
+        try {
+            const id = req.params.id
+            const updateOneUser = await usersService.changePremiumRole(id)
+            res.redirect("/api/users/useredit")
+        } catch (error) {
+            res.status(500).json({ message: "Error", error })
+        }
+    }
+    
 }
 
 export const usersController = new UsersController()
