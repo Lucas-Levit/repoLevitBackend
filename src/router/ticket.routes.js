@@ -42,6 +42,10 @@ ticketRouter.post("/:cid",  async (req, res) => {
             "Ticket de compra",
             `${ticket}`
         );
+        // Vaciar el carrito después de completar la compra
+        cart.products = [];
+        await cart.save();
+        
         res.render("compraExitosa", { ticketId: ticket._id });
 
 

@@ -180,7 +180,7 @@ io.on("connection" , (socket) => {
 //         thumbnail: ["hola"]
 //     }
 //     ])
-    // ,
+// ,
 //     {
 //         title: "Product 19",
 //         description: "Description for Product 19",
