@@ -59,7 +59,7 @@ passport.use(
         {
             clientID: "Iv1.570235c63413e78f",
             clientSecret: "b1a59dfd337e53cf3e2b2ffb5d106e89fad60d38",
-            callbackURL: "https://lucas-levit-repolevitbackend.onrender.com",
+            callbackURL: "https://lucas-levit-repolevitbackend.onrender.com/sessions/github",
         },
         async (accesToken, refreshToken, profile, done) => {
             const { name, email, id, login } = profile._json;
